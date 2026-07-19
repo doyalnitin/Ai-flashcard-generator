@@ -1,4 +1,4 @@
-# ⚡ FlashMind
+# FlashMind
 
 > Turn any text or image into study flashcards — instantly.
 
@@ -19,10 +19,10 @@
 
 ```mermaid
 graph LR
-    A["📝 User Input"] -->|"text or image"| B["⚙️ Express Server"]
-    B -->|"API call"| C["🤖 Gemini AI"]
-    C -->|"JSON cards"| D["💾 In-Memory Storage"]
-    D -->|"response"| E["🃏 Flashcards"]
+    A[" User Input"] -->|"text or image"| B[" Express Server"]
+    B -->|"API call"| C[" Gemini AI"]
+    C -->|"JSON cards"| D[" In-Memory Storage"]
+    D -->|"response"| E[" Flashcards"]
     style A fill:#dbeafe,stroke:#3b82f6,color:#1e40af
     style B fill:#ccfbf1,stroke:#0d9488,color:#065f46
     style C fill:#fef3c7,stroke:#d97706,color:#92400e
@@ -207,4 +207,4 @@ Open http://localhost:3000.
 
 ---
 
-**Made with ⚡ by FlashMind**
+**Made with by FlashMind**
