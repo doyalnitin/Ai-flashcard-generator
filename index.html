@@ -9,6 +9,7 @@
   <style>
     * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+    body { overflow-x: hidden; }
 
     .btn-purple { background: #8e51ff; border-bottom: 3px solid #7c22e0; }
     .btn-purple:hover { background: #7c3aed; transform: translateY(-1px); }
@@ -24,17 +25,17 @@
     .flashcard-back { transform: rotateY(180deg); }
 
     /* Float animations */
-    @keyframes float1 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
-    @keyframes float2 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(-4deg); } }
-    @keyframes float3 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(2deg); } }
+    @keyframes float1 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(3deg); } }
+    @keyframes float2 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(-3deg); } }
+    @keyframes float3 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-18px) rotate(2deg); } }
     .float-1 { animation: float1 5s ease-in-out infinite; }
     .float-2 { animation: float2 6s ease-in-out infinite 0.5s; }
     .float-3 { animation: float3 4.5s ease-in-out infinite 1s; }
     .float-4 { animation: float2 5.5s ease-in-out infinite 1.5s; }
 
     /* Globe orbit */
-    .globe-wrap { position: relative; width: 280px; height: 280px; margin: 0 auto; }
-    @keyframes orbit { 0% { transform: rotate(0deg) translateX(130px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(130px) rotate(-360deg); } }
+    .globe-wrap { position: relative; width: 260px; height: 260px; margin: 0 auto; }
+    @keyframes orbit { 0% { transform: rotate(0deg) translateX(120px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); } }
     .orbit-tag { position: absolute; top: 50%; left: 50%; margin-top: -14px; margin-left: -30px; animation: orbit linear infinite; }
     .orbit-tag:nth-child(1) { animation-duration: 28s; }
     .orbit-tag:nth-child(2) { animation-duration: 32s; animation-delay: -4s; }
@@ -52,60 +53,48 @@
     @keyframes logoScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
     /* Scroll reveal */
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
 
-    /* Pulse ring on globe */
+    /* Pulse ring */
     @keyframes pulseRing { 0% { transform: scale(1); opacity: 0.3; } 100% { transform: scale(1.3); opacity: 0; } }
     .pulse-ring { animation: pulseRing 3s ease-out infinite; }
 
-    /* Card hover glow */
     .step-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .step-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
 
-    /* Gradient text */
     .gradient-text { background: linear-gradient(135deg, #8e51ff, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-
-    /* Typing animation for hero */
-    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-    .cursor-blink::after { content: '|'; animation: blink 1s step-end infinite; color: #8e51ff; font-weight: 300; }
 
     input:focus, textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(142,81,255,0.15); border-color: #8e51ff; }
 
-    .nav-dropdown { opacity: 0; visibility: hidden; transform: translateY(8px); transition: all 0.2s ease; }
-    .nav-item:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+    .nav-dropdown { opacity: 0; visibility: hidden; transform: translateY(8px); transition: all 0.2s ease; pointer-events: none; }
+    .nav-item:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
 
     .globe-section { background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
     .footer-bg { background: #f5f3ff; }
 
-    /* Smooth scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 3px; }
-
-    /* Hero badge shimmer */
-    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-    .shimmer { background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer 3s infinite; }
   </style>
 </head>
 <body class="bg-white">
 
   <!-- Navigation -->
   <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100/80">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-10">
-        <a href="#" class="flex items-center gap-2.5 group">
-          <div class="w-8 h-8 rounded-xl bg-gray-900 flex items-center justify-center group-hover:bg-violet-600 transition-colors duration-300">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-8">
+        <a href="#" class="flex items-center gap-2 group">
+          <div class="w-8 h-8 rounded-xl bg-gray-900 flex items-center justify-center group-hover:bg-violet-600 transition-colors">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M9 9h6M9 13h4"/></svg>
           </div>
-          <span class="font-bold text-gray-900 text-lg tracking-tight">flashmind</span>
+          <span class="font-bold text-gray-900 text-lg">flashmind</span>
         </a>
         <div class="hidden md:flex items-center gap-1">
           <div class="nav-item relative">
-            <button class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 px-3.5 py-2 rounded-lg hover:bg-gray-50 transition font-medium">
+            <button class="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition font-medium">
               Features
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
             </button>
@@ -130,95 +119,99 @@
               </div>
             </div>
           </div>
-          <a href="#how-it-works" class="text-sm text-gray-500 hover:text-gray-900 px-3.5 py-2 rounded-lg hover:bg-gray-50 transition font-medium">How it works</a>
+          <a href="#how-it-works" class="text-sm text-gray-500 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition font-medium">How it works</a>
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <button class="btn-purple text-white font-semibold text-sm py-2.5 px-6 rounded-xl transition-all duration-200">Get started</button>
+        <button class="btn-purple text-white font-semibold text-sm py-2.5 px-6 rounded-xl transition-all">Get started</button>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- Hero + Upload (combined) -->
   <section class="hero-bg relative overflow-hidden">
     <!-- Floating Icons -->
     <div class="absolute inset-0 pointer-events-none hidden md:block">
-      <div class="absolute top-24 left-[5%] lg:left-[10%] float-1">
+      <div class="absolute top-28 left-[6%] float-1">
         <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-200/40 border border-yellow-100"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg></div>
       </div>
-      <div class="absolute top-20 right-[5%] lg:right-[10%] float-2">
+      <div class="absolute top-24 right-[6%] float-2">
         <div class="w-11 h-11 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-violet-200/40 border border-violet-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
       </div>
-      <div class="absolute bottom-44 left-[6%] lg:left-[12%] float-3">
+      <div class="absolute bottom-52 left-[8%] float-3">
         <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-teal-200/40 border border-teal-100"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M9 9h6M9 13h4"/></svg></div>
       </div>
-      <div class="absolute bottom-36 right-[6%] lg:right-[12%] float-4">
+      <div class="absolute bottom-44 right-[8%] float-4">
         <div class="w-11 h-11 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-200/40 border border-pink-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-      </div>
-      <div class="absolute top-52 left-[22%] float-2 hidden xl:block">
-        <div class="w-9 h-9 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-200/40 border border-blue-100"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
       </div>
     </div>
 
-    <div class="max-w-4xl mx-auto px-6 pt-28 pb-8 text-center relative z-10">
-      <!-- Badge -->
-      <div class="inline-flex items-center gap-2 bg-white/70 backdrop-blur border border-violet-200/50 text-violet-700 text-xs font-semibold px-4 py-2 rounded-full mb-8 shadow-sm">
+    <div class="max-w-3xl mx-auto px-6 pt-20 pb-10 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 bg-white/70 backdrop-blur border border-violet-200/50 text-violet-700 text-xs font-semibold px-4 py-2 rounded-full mb-6 shadow-sm">
         <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
         Trusted by 1.2M+ students worldwide
       </div>
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] mb-6 tracking-tight">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] mb-5 tracking-tight">
         Generate quality<br>flashcards <span class="text-yellow-400 underline decoration-yellow-300 decoration-[3px] underline-offset-8">in seconds.</span>
       </h1>
-      <p class="text-lg text-gray-500 mb-10 max-w-md mx-auto leading-relaxed">Upload your notes, images, or documents and let AI create perfect study cards for you.</p>
-
+      <p class="text-base text-gray-500 mb-8 max-w-md mx-auto leading-relaxed">Upload your notes, images, or documents and let AI create perfect study cards for you.</p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <button id="btn-hero" class="btn-purple text-white font-semibold text-base py-3.5 px-8 rounded-xl inline-flex items-center gap-2.5 transition-all duration-200 shadow-lg shadow-violet-300/30">
+        <button id="btn-hero" class="btn-purple text-white font-semibold text-base py-3.5 px-8 rounded-xl inline-flex items-center gap-2.5 transition-all shadow-lg shadow-violet-300/30">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg>
           Upload your Document
         </button>
-        <a href="#how-it-works" class="text-sm font-semibold text-gray-600 hover:text-violet-600 transition px-4 py-3.5 inline-flex items-center gap-1.5">
+        <a href="#how-it-works" class="text-sm font-semibold text-gray-500 hover:text-violet-600 transition px-4 py-3.5 inline-flex items-center gap-1">
           See how it works
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
         </a>
       </div>
     </div>
 
-    <!-- App Preview Screenshot -->
-    <div class="max-w-5xl mx-auto px-6 pb-20 pt-8">
-      <div class="bg-white rounded-2xl shadow-2xl shadow-gray-300/40 border border-gray-200/80 overflow-hidden reveal">
-        <div class="bg-gray-50 border-b border-gray-200/80 px-4 py-2.5 flex items-center gap-2">
-          <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div></div>
-          <div class="flex-1 text-center text-xs text-gray-400 font-medium">flashmind.app</div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 min-h-[320px]">
-          <!-- Sidebar -->
-          <div class="bg-gray-50/80 border-r border-gray-100 p-4 hidden md:block">
-            <div class="flex items-center gap-2.5 mb-5 pb-4 border-b border-gray-200/60">
-              <div class="w-7 h-7 rounded-lg bg-violet-500 flex items-center justify-center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="3"/></svg></div>
-              <span class="text-xs font-bold text-gray-700">flashmind</span>
+    <!-- Create Flashcards — immediately below hero -->
+    <div class="max-w-6xl mx-auto px-6 pb-20 pt-4">
+      <div class="bg-white rounded-3xl shadow-2xl shadow-gray-200/60 border border-gray-100 p-6 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Left: Input -->
+          <div>
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Create flashcards</h2>
+            <input id="input-title" type="text" placeholder="Give it a name" class="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm border border-gray-200 font-medium placeholder-gray-400 transition mb-3">
+            <textarea id="input-text" rows="4" placeholder="Paste your notes here..." class="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm border border-gray-200 font-medium placeholder-gray-400 resize-none transition mb-4"></textarea>
+            <div id="drop-zone" class="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center cursor-pointer hover:border-violet-400 hover:bg-violet-50/30 transition-all duration-300 mb-4">
+              <input type="file" id="file-input" accept=".png,.jpg,.jpeg,.webp,.gif" class="hidden">
+              <div class="flex flex-col items-center gap-2">
+                <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+                <p class="text-sm text-gray-400">Drop a <strong class="text-gray-600">photo</strong> here, or <span class="text-violet-600 font-semibold">browse</span></p>
+              </div>
+              <p id="file-name" class="text-sm text-violet-600 mt-2 hidden font-semibold"></p>
             </div>
-            <div class="space-y-1">
-              <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-white text-xs font-medium text-gray-700 shadow-sm border border-gray-100"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Home</div>
-              <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-gray-500 hover:bg-white transition"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/></svg> Heart Anatomy</div>
-              <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-gray-500 hover:bg-white transition"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> Biology 101</div>
+            <div class="flex gap-3">
+              <button id="btn-generate" class="flex-1 btn-purple text-white font-semibold py-3 px-5 rounded-xl transition-all active:scale-[0.98]">Generate from text</button>
+              <button id="btn-upload" class="flex-1 bg-violet-600 text-white hover:bg-violet-700 font-semibold py-3 px-5 rounded-xl transition-all active:scale-[0.98] hidden">Generate from file</button>
             </div>
           </div>
-          <!-- Main Content -->
-          <div class="md:col-span-2 p-6">
-            <div class="flex items-center justify-between mb-5">
-              <h3 class="font-bold text-gray-900 text-sm">Heart Anatomy</h3>
-              <div class="flex gap-2">
-                <span class="text-[10px] bg-gray-100 px-2.5 py-1 rounded-md text-gray-500 font-medium">Source 8%</span>
-                <span class="text-[10px] bg-violet-100 px-2.5 py-1 rounded-md text-violet-700 font-semibold">Flashcards 8</span>
-                <span class="text-[10px] bg-gray-100 px-2.5 py-1 rounded-md text-gray-500 font-medium">Quizzes</span>
+          <!-- Right: Flashcard Preview -->
+          <div class="flex flex-col items-center justify-center">
+            <div class="perspective w-full max-w-sm">
+              <div id="flashcard-container" class="cursor-pointer h-72">
+                <div id="flashcard-inner" class="card-3d w-full h-full relative">
+                  <div class="flashcard-front bg-gradient-to-br from-violet-500 to-purple-600 rounded-3xl p-6 flex flex-col justify-between text-white shadow-xl">
+                    <div class="flex items-center justify-between"><span id="card-badge" class="bg-white/20 backdrop-blur text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">QA</span><span id="card-progress" class="text-white/60 text-xs font-medium">0 / 0</span></div>
+                    <div class="text-center px-4"><p id="card-front-text" class="text-lg font-semibold leading-relaxed">Generate flashcards to start...</p></div>
+                    <div class="text-center text-white/50 text-xs">Tap to reveal answer</div>
+                  </div>
+                  <div class="flashcard-back bg-gradient-to-br from-teal-400 to-emerald-500 rounded-3xl p-6 flex flex-col justify-between text-white shadow-xl">
+                    <div class="flex items-center justify-between"><span class="bg-white/20 backdrop-blur text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">Answer</span></div>
+                    <div class="text-center px-4"><p id="card-back-text" class="text-xl font-bold leading-relaxed">The answer appears here</p></div>
+                    <div class="text-center text-white/50 text-xs">How well did you know it?</div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="bg-gray-50 rounded-xl p-4 text-xs text-gray-600 leading-relaxed mb-5 border border-gray-100">
-              <span class="bg-yellow-200/70 px-1 rounded font-medium">Heart location</span> The heart is located in the <span class="bg-yellow-200/70 px-1 rounded font-medium">mediastinum</span>, in the thoracic cavity. It sits behind the <span class="bg-yellow-200/70 px-1 rounded font-medium">sternum</span> and is enclosed in a double-walled sac called the <span class="bg-yellow-200/70 px-1 rounded font-medium">pericardium</span>.
-            </div>
-            <div class="flex gap-2">
-              <button class="bg-yellow-100 text-yellow-700 text-xs font-medium px-3.5 py-2 rounded-lg flex items-center gap-1.5 border border-yellow-200/50"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg> Highlight Text</button>
-              <button class="bg-gray-100 text-gray-600 text-xs font-medium px-3.5 py-2 rounded-lg border border-gray-200/50">Quiz me</button>
+            <div id="scheduler-actions" class="invisible opacity-0 transition-all duration-300 w-full max-w-sm flex gap-2 mt-6">
+              <button class="flex-1 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Again</button>
+              <button class="flex-1 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Hard</button>
+              <button class="flex-1 bg-green-50 text-green-600 hover:bg-green-100 border border-green-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Good</button>
+              <button class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Easy</button>
             </div>
           </div>
         </div>
@@ -227,9 +220,9 @@
   </section>
 
   <!-- Logo Strip -->
-  <section class="py-12 border-b border-gray-100 bg-white overflow-hidden">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <div class="overflow-hidden mb-6">
+  <section class="py-10 border-b border-gray-100 bg-white overflow-hidden">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <div class="overflow-hidden mb-5">
         <div class="logo-track">
           <span class="font-bold text-xs tracking-wider text-gray-300 whitespace-nowrap">POLITECNICO<br>MILANO</span>
           <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Stanford<br><span class="text-[10px] font-normal">MEDICINE</span></span>
@@ -237,7 +230,6 @@
           <span class="font-bold text-xs tracking-wider text-gray-300 whitespace-nowrap">UNIVERSITAT<br>KOLN</span>
           <span class="font-bold text-xs text-gray-300 whitespace-nowrap">MIT<br><span class="text-[10px] font-normal">Engineering</span></span>
           <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Oxford<br><span class="text-[10px] font-normal">University</span></span>
-          <!-- Duplicate for seamless loop -->
           <span class="font-bold text-xs tracking-wider text-gray-300 whitespace-nowrap">POLITECNICO<br>MILANO</span>
           <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Stanford<br><span class="text-[10px] font-normal">MEDICINE</span></span>
           <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Imperial College<br><span class="text-[10px] font-normal">London</span></span>
@@ -251,10 +243,10 @@
   </section>
 
   <!-- How It Works -->
-  <section id="how-it-works" class="py-24 bg-gray-50/50">
+  <section id="how-it-works" class="py-20 bg-gray-50/50">
     <div class="max-w-5xl mx-auto px-6">
-      <div class="text-center mb-16 reveal">
-        <div class="inline-flex items-center gap-2 bg-white text-gray-600 text-xs font-semibold px-4 py-2 rounded-full mb-5 shadow-sm border border-gray-200/60">
+      <div class="text-center mb-14 reveal">
+        <div class="inline-flex items-center gap-2 bg-white text-gray-600 text-xs font-semibold px-4 py-2 rounded-full mb-4 shadow-sm border border-gray-200/60">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
           How it works
         </div>
@@ -262,8 +254,8 @@
       </div>
 
       <!-- Step 1 -->
-      <div class="step-card mb-8 flex flex-col md:flex-row bg-white rounded-3xl border border-gray-100 overflow-hidden reveal">
-        <div class="md:w-1/2 bg-gradient-to-br from-violet-50 to-purple-50 p-10 flex items-center justify-center">
+      <div class="step-card mb-6 flex flex-col md:flex-row bg-white rounded-3xl border border-gray-100 overflow-hidden reveal">
+        <div class="md:w-1/2 bg-gradient-to-br from-violet-50 to-purple-50 p-8 flex items-center justify-center">
           <div class="relative">
             <div class="w-48 h-36 bg-white rounded-2xl shadow-xl border border-gray-100 p-5 flex flex-col gap-2.5 rotate-[-2deg]">
               <div class="w-full h-2.5 bg-gray-100 rounded-full"></div>
@@ -275,34 +267,34 @@
             <div class="absolute -top-3 -right-3 w-10 h-10 bg-yellow-400 rounded-xl flex items-center justify-center shadow-lg rotate-6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg></div>
           </div>
         </div>
-        <div class="md:w-1/2 p-10 flex flex-col justify-center">
-          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-5">1</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">Generate quality flashcards</h3>
-          <p class="text-sm text-gray-500 leading-relaxed mb-5">Upload notes or images and our AI generates flashcards and highlights in seconds.</p>
+        <div class="md:w-1/2 p-8 flex flex-col justify-center">
+          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-4">1</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Generate quality flashcards</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">Upload notes or images and our AI generates flashcards and highlights in seconds.</p>
           <a href="#" class="text-sm font-semibold text-violet-600 hover:text-violet-700 transition inline-flex items-center gap-1">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </div>
 
       <!-- Step 2 -->
-      <div class="step-card mb-8 flex flex-col md:flex-row-reverse bg-white rounded-3xl border border-gray-100 overflow-hidden reveal">
-        <div class="md:w-1/2 bg-gradient-to-br from-green-50 to-emerald-50 p-10 flex items-center justify-center">
-          <div class="flex gap-4">
-            <div class="w-24 h-32 bg-gradient-to-b from-green-400 to-green-500 rounded-2xl shadow-lg -rotate-3"></div>
-            <div class="w-24 h-32 bg-gradient-to-b from-red-400 to-red-500 rounded-2xl shadow-lg rotate-2 -mt-3"></div>
-            <div class="w-24 h-32 bg-gradient-to-b from-blue-400 to-blue-500 rounded-2xl shadow-lg rotate-3 mt-3"></div>
+      <div class="step-card mb-6 flex flex-col md:flex-row-reverse bg-white rounded-3xl border border-gray-100 overflow-hidden reveal">
+        <div class="md:w-1/2 bg-gradient-to-br from-green-50 to-emerald-50 p-8 flex items-center justify-center">
+          <div class="flex gap-3">
+            <div class="w-20 h-28 bg-gradient-to-b from-green-400 to-green-500 rounded-2xl shadow-lg -rotate-3"></div>
+            <div class="w-20 h-28 bg-gradient-to-b from-red-400 to-red-500 rounded-2xl shadow-lg rotate-2 -mt-3"></div>
+            <div class="w-20 h-28 bg-gradient-to-b from-blue-400 to-blue-500 rounded-2xl shadow-lg rotate-3 mt-3"></div>
           </div>
         </div>
-        <div class="md:w-1/2 p-10 flex flex-col justify-center">
-          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-5">2</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">Study with Spaced Repetition</h3>
-          <p class="text-sm text-gray-500 leading-relaxed mb-5">Our spaced repetition algorithm maximizes memorization while minimizing your study time.</p>
+        <div class="md:w-1/2 p-8 flex flex-col justify-center">
+          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-4">2</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Study with Spaced Repetition</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">Our spaced repetition algorithm maximizes memorization while minimizing your study time.</p>
           <a href="#" class="text-sm font-semibold text-violet-600 hover:text-violet-700 transition inline-flex items-center gap-1">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </div>
 
       <!-- Step 3 -->
       <div class="step-card flex flex-col md:flex-row bg-white rounded-3xl border border-gray-100 overflow-hidden reveal">
-        <div class="md:w-1/2 bg-gradient-to-br from-blue-50 to-sky-50 p-10 flex items-center justify-center">
+        <div class="md:w-1/2 bg-gradient-to-br from-blue-50 to-sky-50 p-8 flex items-center justify-center">
           <div class="w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-4">
             <div class="text-xs font-bold text-gray-700 mb-3">Quiz</div>
             <div class="space-y-2.5">
@@ -313,10 +305,10 @@
             </div>
           </div>
         </div>
-        <div class="md:w-1/2 p-10 flex flex-col justify-center">
-          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-5">3</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">Test with quizzes</h3>
-          <p class="text-sm text-gray-500 leading-relaxed mb-5">Build confidence with quizzes. Get detailed explanations for each mistake to strengthen weak areas.</p>
+        <div class="md:w-1/2 p-8 flex flex-col justify-center">
+          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-4">3</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Test with quizzes</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-4">Build confidence with quizzes. Get detailed explanations for each mistake.</p>
           <a href="#" class="text-sm font-semibold text-violet-600 hover:text-violet-700 transition inline-flex items-center gap-1">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </div>
@@ -324,18 +316,14 @@
   </section>
 
   <!-- Globe Section -->
-  <section class="globe-section py-28 relative overflow-hidden">
-    <div class="max-w-6xl mx-auto px-6 text-center relative z-10">
-      <!-- Globe -->
-      <div class="globe-wrap mb-12">
-        <!-- Pulse rings -->
+  <section class="globe-section py-24 relative overflow-hidden">
+    <div class="max-w-5xl mx-auto px-6 text-center relative z-10">
+      <div class="globe-wrap mb-10">
         <div class="absolute inset-0 border border-white/10 rounded-full pulse-ring"></div>
         <div class="absolute inset-6 border border-white/10 rounded-full pulse-ring" style="animation-delay: 1s"></div>
         <div class="absolute inset-12 border border-white/15 rounded-full pulse-ring" style="animation-delay: 2s"></div>
         <div class="absolute inset-[72px] border border-white/20 rounded-full"></div>
-        <!-- Center dot -->
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-violet-400 rounded-full shadow-lg shadow-violet-400/50 z-10"></div>
-        <!-- Orbiting Tags -->
         <div class="orbit-tag"><div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg whitespace-nowrap">Chemistry</div></div>
         <div class="orbit-tag"><div class="bg-violet-500/80 backdrop-blur-sm text-white text-[10px] font-semibold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap">Engineering</div></div>
         <div class="orbit-tag"><div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg whitespace-nowrap">History</div></div>
@@ -347,23 +335,23 @@
         <div class="orbit-tag"><div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg whitespace-nowrap">Languages</div></div>
         <div class="orbit-tag"><div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg whitespace-nowrap">Business</div></div>
       </div>
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">Whatever you study,<br>we have you covered.</h2>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">Whatever you study,<br>we have you covered.</h2>
       <p class="text-sm text-gray-400">Click on your subject to see what we've made for you</p>
     </div>
   </section>
 
   <!-- Made for Every Student -->
-  <section class="py-24 bg-white">
+  <section class="py-20 bg-white">
     <div class="max-w-5xl mx-auto px-6">
-      <div class="text-center mb-14 reveal">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">Made for <span class="gradient-text">every</span> student</h2>
+      <div class="text-center mb-12 reveal">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">Made for <span class="gradient-text">every</span> student</h2>
         <p class="text-gray-500 max-w-lg mx-auto">We leverage the most advanced techniques for studying effectively and retaining memory for a long time.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-gray-50 rounded-3xl p-9 border border-gray-100 text-left reveal reveal-delay-1 hover:shadow-lg hover:shadow-gray-200/40 transition-shadow duration-300">
-          <div class="w-14 h-14 bg-violet-100 rounded-2xl flex items-center justify-center mb-6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-left reveal reveal-delay-1 hover:shadow-lg hover:shadow-gray-200/40 transition-shadow">
+          <div class="w-14 h-14 bg-violet-100 rounded-2xl flex items-center justify-center mb-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
           <h3 class="font-bold text-gray-900 mb-2 text-lg">Available in any language</h3>
-          <p class="text-sm text-gray-500 mb-5 leading-relaxed">Our AI tutor speaks any language. Students from 100+ countries use FlashMind daily.</p>
+          <p class="text-sm text-gray-500 mb-4 leading-relaxed">Our AI tutor speaks any language. Students from 100+ countries use FlashMind daily.</p>
           <div class="flex flex-wrap gap-2">
             <span class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full font-medium">Espanol</span>
             <span class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full font-medium">English</span>
@@ -372,92 +360,36 @@
             <span class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full font-medium">Arabic</span>
           </div>
         </div>
-        <div class="bg-gray-50 rounded-3xl p-9 border border-gray-100 text-left reveal reveal-delay-2 hover:shadow-lg hover:shadow-gray-200/40 transition-shadow duration-300">
-          <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 text-left reveal reveal-delay-2 hover:shadow-lg hover:shadow-gray-200/40 transition-shadow">
+          <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
           <h3 class="font-bold text-gray-900 mb-2 text-lg">Proven by science</h3>
-          <p class="text-sm text-gray-500 mb-5 leading-relaxed">Our spaced repetition algorithm maximizes memorization while minimizing effort.</p>
+          <p class="text-sm text-gray-500 mb-4 leading-relaxed">Our spaced repetition algorithm maximizes memorization while minimizing effort.</p>
           <a href="#" class="text-sm font-semibold text-violet-600 hover:text-violet-700 transition inline-flex items-center gap-1">Learn more <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="py-16 bg-white text-center">
-    <div class="reveal">
-      <button id="btn-cta" class="btn-purple text-white font-semibold text-base py-4 px-10 rounded-xl inline-flex items-center gap-2.5 transition-all duration-200 shadow-lg shadow-violet-300/30">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
-        Try it now for free
-      </button>
+  <!-- Saved Decks -->
+  <section class="py-16 bg-gray-50/50">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="bg-white rounded-3xl shadow-lg shadow-gray-200/40 border border-gray-100 p-8 reveal">
+        <h2 class="text-xl font-bold text-gray-900 mb-5">Your study sets</h2>
+        <div id="decks-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
     </div>
   </section>
 
-  <!-- App Section (Create + Study) -->
-  <main class="max-w-7xl mx-auto px-6 py-16">
-    <!-- Create + Preview -->
-    <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/40 border border-gray-100 p-8 mb-10 reveal">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div>
-          <h2 class="text-xl font-bold text-gray-900 mb-6">Create flashcards</h2>
-          <input id="input-title" type="text" placeholder="Give it a name" class="w-full px-4 py-3.5 bg-gray-50 rounded-xl text-sm border border-gray-200 font-medium placeholder-gray-400 transition mb-3">
-          <textarea id="input-text" rows="4" placeholder="Paste your notes here..." class="w-full px-4 py-3.5 bg-gray-50 rounded-xl text-sm border border-gray-200 font-medium placeholder-gray-400 resize-none transition mb-4"></textarea>
-          <div id="drop-zone" class="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center cursor-pointer hover:border-violet-400 hover:bg-violet-50/30 transition-all duration-300 mb-5">
-            <input type="file" id="file-input" accept=".png,.jpg,.jpeg,.webp,.gif" class="hidden">
-            <div class="flex flex-col items-center gap-2">
-              <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-              <p class="text-sm text-gray-400">Drop a <strong class="text-gray-600">photo</strong> here, or <span class="text-violet-600 font-semibold">browse</span></p>
-            </div>
-            <p id="file-name" class="text-sm text-violet-600 mt-2 hidden font-semibold"></p>
-          </div>
-          <div class="flex gap-3">
-            <button id="btn-generate" class="flex-1 btn-purple text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 active:scale-[0.98]">Generate from text</button>
-            <button id="btn-upload" class="flex-1 bg-violet-600 text-white hover:bg-violet-700 font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 active:scale-[0.98] hidden">Generate from file</button>
-          </div>
-        </div>
-        <div class="flex flex-col items-center justify-center">
-          <div class="perspective w-full max-w-sm">
-            <div id="flashcard-container" class="cursor-pointer h-72">
-              <div id="flashcard-inner" class="card-3d w-full h-full relative">
-                <div class="flashcard-front bg-gradient-to-br from-violet-500 to-purple-600 rounded-3xl p-6 flex flex-col justify-between text-white shadow-xl">
-                  <div class="flex items-center justify-between"><span id="card-badge" class="bg-white/20 backdrop-blur text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">QA</span><span id="card-progress" class="text-white/60 text-xs font-medium">0 / 0</span></div>
-                  <div class="text-center px-4"><p id="card-front-text" class="text-lg font-semibold leading-relaxed">Generate flashcards to start...</p></div>
-                  <div class="text-center text-white/50 text-xs">Tap to reveal answer</div>
-                </div>
-                <div class="flashcard-back bg-gradient-to-br from-teal-400 to-emerald-500 rounded-3xl p-6 flex flex-col justify-between text-white shadow-xl">
-                  <div class="flex items-center justify-between"><span class="bg-white/20 backdrop-blur text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">Answer</span></div>
-                  <div class="text-center px-4"><p id="card-back-text" class="text-xl font-bold leading-relaxed">The answer appears here</p></div>
-                  <div class="text-center text-white/50 text-xs">How well did you know it?</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="scheduler-actions" class="invisible opacity-0 transition-all duration-300 w-full max-w-sm flex gap-2 mt-6">
-            <button class="flex-1 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Again</button>
-            <button class="flex-1 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Hard</button>
-            <button class="flex-1 bg-green-50 text-green-600 hover:bg-green-100 border border-green-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Good</button>
-            <button class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Easy</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Saved Decks -->
-    <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/40 border border-gray-100 p-8 reveal">
-      <h2 class="text-xl font-bold text-gray-900 mb-6">Your study sets</h2>
-      <div id="decks-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </div>
-  </main>
-
   <!-- Footer -->
-  <footer class="footer-bg py-16">
+  <footer class="footer-bg py-14">
     <div class="max-w-5xl mx-auto px-6">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm mb-12">
-        <div><h5 class="font-semibold text-gray-900 mb-4">About us</h5><ul class="space-y-2.5 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Community</a></li><li><a href="#" class="hover:text-violet-600 transition">Blog</a></li></ul></div>
-        <div><h5 class="font-semibold text-gray-900 mb-4">Help</h5><ul class="space-y-2.5 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Help & Tutorials</a></li><li><a href="#" class="hover:text-violet-600 transition">Discord</a></li><li><a href="#" class="hover:text-violet-600 transition">Contacts</a></li></ul></div>
-        <div><h5 class="font-semibold text-gray-900 mb-4">Social</h5><ul class="space-y-2.5 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Instagram</a></li><li><a href="#" class="hover:text-violet-600 transition">TikTok</a></li><li><a href="#" class="hover:text-violet-600 transition">LinkedIn</a></li></ul></div>
-        <div><h5 class="font-semibold text-gray-900 mb-4">Policies</h5><ul class="space-y-2.5 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Terms & Conditions</a></li><li><a href="#" class="hover:text-violet-600 transition">Privacy Policy</a></li></ul></div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm mb-10">
+        <div><h5 class="font-semibold text-gray-900 mb-3">About us</h5><ul class="space-y-2 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Community</a></li><li><a href="#" class="hover:text-violet-600 transition">Blog</a></li></ul></div>
+        <div><h5 class="font-semibold text-gray-900 mb-3">Help</h5><ul class="space-y-2 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Help & Tutorials</a></li><li><a href="#" class="hover:text-violet-600 transition">Discord</a></li><li><a href="#" class="hover:text-violet-600 transition">Contacts</a></li></ul></div>
+        <div><h5 class="font-semibold text-gray-900 mb-3">Social</h5><ul class="space-y-2 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Instagram</a></li><li><a href="#" class="hover:text-violet-600 transition">TikTok</a></li><li><a href="#" class="hover:text-violet-600 transition">LinkedIn</a></li></ul></div>
+        <div><h5 class="font-semibold text-gray-900 mb-3">Policies</h5><ul class="space-y-2 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Terms & Conditions</a></li><li><a href="#" class="hover:text-violet-600 transition">Privacy Policy</a></li></ul></div>
       </div>
-      <div class="border-t border-violet-200/40 pt-8 text-center">
+      <div class="border-t border-violet-200/40 pt-6 text-center">
         <p class="text-xs text-gray-400">&copy; 2026 FlashMind. All rights reserved.</p>
       </div>
     </div>
@@ -479,10 +411,9 @@
       actions.classList.toggle('opacity-0', !isFlipped);
     });
 
-    // Scroll reveal
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
     async function fetchAllDecks() {
@@ -490,9 +421,9 @@
         const r = await fetch('/api/decks');
         const d = await r.json();
         const el = document.getElementById('decks-list');
-        if (!d.length) { el.innerHTML = '<p class="text-gray-400 text-center py-10 col-span-full text-sm">No flashcards yet. Create your first deck above!</p>'; return; }
+        if (!d.length) { el.innerHTML = '<p class="text-gray-400 text-center py-8 col-span-full text-sm">No flashcards yet. Create your first deck above!</p>'; return; }
         const c = ['from-violet-500 to-purple-600','from-pink-500 to-rose-600','from-blue-500 to-cyan-600','from-teal-500 to-emerald-600','from-amber-500 to-orange-600'];
-        el.innerHTML = d.map((x,i) => `<button data-deck-id="${x.id}" class="deck-btn text-left rounded-2xl p-5 text-white bg-gradient-to-br ${c[i%c.length]} relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-gray-300/30"><div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div><div class="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-6 -translate-x-6"></div><div class="relative z-10"><p class="font-bold text-lg mb-2 truncate">${esc(x.title)}</p><div class="flex items-center justify-between"><span class="text-white/60 text-xs">${new Date(x.created_at).toLocaleDateString()}</span><span class="bg-white/20 backdrop-blur text-xs font-semibold px-3 py-1 rounded-full">${x.totalCards} cards</span></div></div></button>`).join('');
+        el.innerHTML = d.map((x,i) => `<button data-deck-id="${x.id}" class="deck-btn text-left rounded-2xl p-5 text-white bg-gradient-to-br ${c[i%c.length]} relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-gray-300/30"><div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div><div class="relative z-10"><p class="font-bold text-lg mb-2 truncate">${esc(x.title)}</p><div class="flex items-center justify-between"><span class="text-white/60 text-xs">${new Date(x.created_at).toLocaleDateString()}</span><span class="bg-white/20 backdrop-blur text-xs font-semibold px-3 py-1 rounded-full">${x.totalCards} cards</span></div></div></button>`).join('');
         el.querySelectorAll('.deck-btn').forEach(b => b.addEventListener('click', () => loadDeck(b.dataset.deckId)));
       } catch(e) {}
     }
@@ -522,8 +453,7 @@
     function shiftNext() { currentIndex++; reset(); setTimeout(render,250); }
 
     document.getElementById('btn-generate').addEventListener('click',createDeck);
-    document.getElementById('btn-hero').addEventListener('click',()=>document.getElementById('input-text').scrollIntoView({behavior:'smooth'}));
-    document.getElementById('btn-cta').addEventListener('click',()=>document.getElementById('input-text').scrollIntoView({behavior:'smooth'}));
+    document.getElementById('btn-hero').addEventListener('click',()=>document.getElementById('input-text').scrollIntoView({behavior:'smooth',block:'center'}));
     document.querySelectorAll('#scheduler-actions button').forEach(b=>b.addEventListener('click',shiftNext));
 
     const dz=document.getElementById('drop-zone'),fi=document.getElementById('file-input'),fn=document.getElementById('file-name'),bu=document.getElementById('btn-upload');
