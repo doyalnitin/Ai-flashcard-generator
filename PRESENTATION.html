@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlashMind — Visual Presentation</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f5f6f8; color: #1e293b; }
+
+    .slide {
+      min-height: 100vh;
+      padding: 60px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid #e2e8f0;
+      position: relative;
+    }
+
+    .slide-number {
+      position: absolute;
+      top: 30px;
+      right: 40px;
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+
+    h1 { font-size: 56px; font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+    h2 { font-size: 36px; font-weight: 700; margin-bottom: 24px; color: #0f172a; }
+    h3 { font-size: 20px; font-weight: 600; margin-bottom: 12px; color: #334155; }
+    p { font-size: 18px; line-height: 1.7; color: #475569; max-width: 700px; }
+
+    .accent { color: #0d9488; }
+    .hero-subtitle { font-size: 22px; color: #64748b; font-weight: 400; margin-bottom: 40px; }
+
+    .mermaid { background: white; border-radius: 16px; padding: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; margin: 20px 0; display: flex; justify-content: center; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 30px; }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+      border: 1px solid #e2e8f0;
+    }
+
+    .card h3 { margin-bottom: 8px; }
+    .card p { font-size: 15px; margin-top: 8px; }
+
+    .tech-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin: 4px;
+    }
+    .badge-teal { background: #ccfbf1; color: #0d9488; }
+    .badge-blue { background: #dbeafe; color: #2563eb; }
+    .badge-purple { background: #f3e8ff; color: #9333ea; }
+    .badge-amber { background: #fef3c7; color: #d97706; }
+    .badge-rose { background: #ffe4e6; color: #e11d48; }
+    .badge-slate { background: #f1f5f9; color: #475569; }
+
+    .mockup-container { display: flex; justify-content: center; margin: 30px 0; }
+
+    .app-mockup {
+      width: 900px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .mockup-header {
+      background: white;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .mockup-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mockup-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #2dd4bf, #0d9488);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .mockup-logo-text { font-weight: 700; font-size: 16px; }
+    .mockup-logo-text span { color: #0d9488; }
+
+    .mockup-body { display: grid; grid-template-columns: 300px 1fr; min-height: 400px; }
+
+    .mockup-sidebar {
+      padding: 20px;
+      background: #fafbfc;
+      border-right: 1px solid #f1f5f9;
+    }
+
+    .mockup-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+    }
+
+    .mockup-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 8px;
+      background: white;
+      color: #334155;
+    }
+
+    .mockup-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+      height: 80px;
+      resize: none;
+      margin-bottom: 8px;
+      background: white;
+      color: #334155;
+    }
+
+    .mockup-btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mockup-btn-primary { background: #0f172a; color: white; }
+    .mockup-btn-teal { background: #0d9488; color: white; }
+
+    .mockup-deck-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: white;
+      border: 1px solid #f1f5f9;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .mockup-deck-count {
+      font-size: 10px;
+      background: #f1f5f9;
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .mockup-main {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flashcard-mock {
+      width: 380px;
+      height: 240px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .flashcard-mock-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #64748b;
+      letter-spacing: 0.5px;
+    }
+
+    .flashcard-mock-text {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      color: #334155;
+      line-height: 1.6;
+    }
+
+    .flashcard-mock-hint {
+      text-align: center;
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+
+    .flashcard-mock-back {
+      background: linear-gradient(135deg, #f0fdfa, #ecfdf5);
+      border-color: #ccfbf1;
+    }
+
+    .flashcard-mock-back .flashcard-mock-badge {
+      background: #0d9488;
+      color: white;
+    }
+
+    .flashcard-mock-back .flashcard-mock-text {
+      color: #065f46;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .rating-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .rating-btn {
+      padding: 8px 24px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+    }
+    .rating-again { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
+    .rating-hard { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .rating-easy { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+
+    .flow-step {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 12px 0;
+    }
+
+    .flow-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #0d9488;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .flow-content { flex: 1; }
+    .flow-content strong { color: #0f172a; }
+    .flow-content span { color: #64748b; font-size: 14px; }
+
+    .arrow-down {
+      text-align: center;
+      color: #cbd5e1;
+      font-size: 24px;
+      margin: 8px 0;
+    }
+
+    .stat-number { font-size: 48px; font-weight: 800; color: #0d9488; }
+    .stat-label { font-size: 14px; color: #64748b; margin-top: 4px; }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    ul { list-style: none; padding: 0; }
+    ul li { padding: 8px 0; padding-left: 24px; position: relative; font-size: 16px; color: #475569; }
+    ul li::before { content: "→"; position: absolute; left: 0; color: #0d9488; font-weight: 700; }
+
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 20px 24px;
+      border-radius: 12px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    .code-comment { color: #64748b; }
+    .code-keyword { color: #7dd3fc; }
+    .code-string { color: #86efac; }
+    .code-number { color: #fcd34d; }
+  </style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide" style="background: linear-gradient(135deg, #f0fdfa 0%, #f5f6f8 50%, #f0fdfa 100%);">
+  <div class="slide-number">01 / 12</div>
+  <h1><span class="accent">Flash</span>Mind</h1>
+  <p class="hero-subtitle">Turn any text or image into study flashcards — instantly.</p>
+  <p style="font-size: 16px; color: #94a3b8;">AI-powered flashcard generator built with Express.js, Google Gemini, and deployed on Vercel.</p>
+  <div style="margin-top: 30px;">
+    <span class="tech-badge badge-teal">Express.js</span>
+    <span class="tech-badge badge-blue">Gemini 2.5 Flash</span>
+    <span class="tech-badge badge-purple">Vercel</span>
+    <span class="tech-badge badge-slate">Tailwind CSS</span>
+  </div>
+</div>
+
+<!-- SLIDE 2: Problem & Solution -->
+<div class="slide">
+  <div class="slide-number">02 / 12</div>
+  <h2>The Problem</h2>
+  <div class="grid-2">
+    <div class="card" style="border-left: 4px solid #f87171;">
+      <h3>Before FlashMind</h3>
+      <ul>
+        <li>Manually writing each flashcard takes hours</li>
+        <li>Hard to know what's important to study</li>
+        <li>Cards are often too long or unfocused</li>
+        <li>No system for spaced repetition</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left: 4px solid #34d399;">
+      <h3>With FlashMind</h3>
+      <ul>
+        <li>Paste text → flashcards in 5 seconds</li>
+        <li>AI extracts the key facts automatically</li>
+        <li>Each card = one atomic concept</li>
+        <li>Upload photos of notes or whiteboards</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Architecture Diagram -->
+<div class="slide">
+  <div class="slide-number">03 / 12</div>
+  <h2>System Architecture</h2>
+  <div class="mermaid">
+    graph LR
+      A["User's Browser"] -->|"HTTP Request"| B["Vercel Serverless"]
+      B -->|"Express.js"| C["API Routes"]
+      C -->|"POST /api/decks/generate"| D["Gemini 2.5 Flash"]
+      C -->|"POST /api/decks/upload"| D
+      C -->|"GET /api/decks"| E["In-Memory Storage"]
+      D -->|"JSON Response"| C
+      C -->|"JSON Response"| A
+      style A fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+      style B fill:#f3e8ff,stroke:#9333ea,color:#6b21a8
+      style C fill:#ccfbf1,stroke:#0d9488,color:#065f46
+      style D fill:#fef3c7,stroke:#d97706,color:#92400e
+      style E fill:#e2e8f0,stroke:#64748b,color:#334155
+  </div>
+</div>
+
+<!-- SLIDE 4: How It Works Flow -->
+<div class="slide">
+  <div class="slide-number">04 / 12</div>
+  <h2>How It Works — Step by Step</h2>
+  <div class="mermaid">
+    graph TD
+      A["1. User pastes text or uploads image"] -->|"text / base64 image"| B["2. Express.js receives request"]
+      B -->|"validates input"| C{"Input type?"}
+      C -->|"Text"| D["3a. Sends to Gemini Text API"]
+      C -->|"Image"| E["3b. Sends to Gemini Vision API"]
+      D -->|"structured JSON"| F["4. Parse flashcards"]
+      E -->|"structured JSON"| F
+      F -->|"save to storage"| G["5. Return flashcards to browser"]
+      G -->|"render cards"| H["6. User studies with flip UI"]
+      style A fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+      style B fill:#ccfbf1,stroke:#0d9488,color:#065f46
+      style C fill:#fef3c7,stroke:#d97706,color:#92400e
+      style D fill:#fef3c7,stroke:#d97706,color:#92400e
+      style E fill:#fef3c7,stroke:#d97706,color:#92400e
+      style F fill:#f3e8ff,stroke:#9333ea,color:#6b21a8
+      style G fill:#ccfbf1,stroke:#0d9488,color:#065f46
+      style H fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+  </div>
+</div>
+
+<!-- SLIDE 5: App Mockup -->
+<div class="slide">
+  <div class="slide-number">05 / 12</div>
+  <h2>App Interface</h2>
+  <div class="mockup-container">
+    <div class="app-mockup">
+      <div class="mockup-header">
+        <div class="mockup-logo">
+          <div class="mockup-logo-icon">⚡</div>
+          <div class="mockup-logo-text">Flash<span>Mind</span></div>
+        </div>
+        <div style="font-size: 12px; color: #94a3b8; background: #f1f5f9; padding: 4px 12px; border-radius: 6px;">3 sets of flashcards</div>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-sidebar">
+          <div class="mockup-section-title">Make new flashcards</div>
+          <input class="mockup-input" placeholder="Give it a name" value="Solar System">
+          <textarea class="mockup-textarea" placeholder="Paste your notes here...">The Sun is a star at the center of our solar system. Mercury is the closest planet to the Sun. Venus is the hottest planet due to its thick atmosphere.</textarea>
+          <div style="border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 8px; font-size: 11px; color: #94a3b8;">
+            Drop a <strong>photo</strong> here, or <span style="color: #0d9488;">choose a file</span>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button class="mockup-btn mockup-btn-primary" style="flex:1;">Make cards from text</button>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <div class="mockup-section-title">Your saved flashcards</div>
+            <div class="mockup-deck-item">
+              <div>
+                <div style="font-weight: 600;">Solar System</div>
+                <div style="font-size: 10px; color: #94a3b8;">Jul 19, 2026</div>
+              </div>
+              <span class="mockup-deck-count">8 cards</span>
+            </div>
+            <div class="mockup-deck-item">
+              <div>
+                <div style="font-weight: 600;">Biology Ch.3</div>
+                <div style="font-size: 10px; color: #94a3b8;">Jul 18, 2026</div>
+              </div>
+              <span class="mockup-deck-count">12 cards</span>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-main">
+          <div class="flashcard-mock">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="flashcard-mock-badge">QA</span>
+              <span style="font-size: 11px; color: #cbd5e1;">3 / 8</span>
+            </div>
+            <div class="flashcard-mock-text">What is the closest planet to the Sun?</div>
+            <div class="flashcard-mock-hint">Tap to see the answer</div>
+          </div>
+          <div class="rating-buttons">
+            <button class="rating-btn rating-again">Again</button>
+            <button class="rating-btn rating-hard">Hard</button>
+            <button class="rating-btn rating-easy">Easy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Flashcard Flip Animation -->
+<div class="slide">
+  <div class="slide-number">06 / 12</div>
+  <h2>Flashcard Flip Animation</h2>
+  <div class="grid-2">
+    <div>
+      <h3>Front (Question)</h3>
+      <div class="flashcard-mock" style="margin-top: 12px;">
+        <div style="display: flex; justify-content: space-between;">
+          <span class="flashcard-mock-badge">CLOZE</span>
+        </div>
+        <div class="flashcard-mock-text">The ______ is the closest planet to the Sun.</div>
+        <div class="flashcard-mock-hint">Tap to see the answer</div>
+      </div>
+      <div class="code-block" style="margin-top: 16px;">
+        <span class="code-comment">/* CSS 3D Transform */</span><br>
+        .perspective { perspective: <span class="code-number">1000px</span>; }<br>
+        .rotate-y-180 { transform: rotateY(<span class="code-number">180deg</span>); }<br>
+        .backface-hidden { backface-visibility: <span class="code-number">hidden</span>; }
+      </div>
+    </div>
+    <div>
+      <h3>Back (Answer)</h3>
+      <div class="flashcard-mock flashcard-mock-back" style="margin-top: 12px;">
+        <div style="display: flex; justify-content: space-between;">
+          <span class="flashcard-mock-badge">Answer</span>
+          <span style="font-size: 11px; color: #6ee7b7;">Correct</span>
+        </div>
+        <div class="flashcard-mock-text">Mercury</div>
+        <div class="flashcard-mock-hint" style="color: #6ee7b7;">How well did you know it?</div>
+      </div>
+      <div class="code-block" style="margin-top: 16px;">
+        <span class="code-comment">/* JavaScript flip handler */</span><br>
+        container.addEventListener('click', () => {<br>
+        &nbsp;&nbsp;isFlipped = !isFlipped;<br>
+        &nbsp;&nbsp;if (isFlipped) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;innerCard.classList.add('rotate-y-180');<br>
+        &nbsp;&nbsp;}<br>
+        });
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: AI Prompt Design -->
+<div class="slide">
+  <div class="slide-number">07 / 12</div>
+  <h2>AI Prompt Engineering</h2>
+  <div class="grid-2">
+    <div>
+      <h3>System Instructions</h3>
+      <div class="code-block">
+        <span class="code-keyword">You are</span> an expert microlearning assistant.<br><br>
+        <span class="code-keyword">Rules:</span><br>
+        1. ONE concept per card<br>
+        2. Use "QA" for questions<br>
+        3. Use "CLOZE" for fill-in-the-blank<br>
+        4. CLOZE: replace term with ______<br>
+        5. Front must have clear context
+      </div>
+      <h3 style="margin-top: 20px;">JSON Schema Enforcement</h3>
+      <div class="code-block">
+        {<br>
+        &nbsp;&nbsp;"cards": [{<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;"type": <span class="code-string">"QA"</span> | <span class="code-string">"CLOZE"</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;"front": <span class="code-string">"string"</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;"back": <span class="code-string">"string"</span><br>
+        &nbsp;&nbsp;}]<br>
+        }
+      </div>
+    </div>
+    <div>
+      <h3>Generated Card Examples</h3>
+      <div class="card" style="margin-bottom: 12px;">
+        <span class="tech-badge badge-teal" style="margin-bottom: 8px;">QA</span>
+        <p style="font-weight: 600; color: #0f172a; margin-top: 8px;">Front: What is the closest planet to the Sun?</p>
+        <p style="color: #0d9488; font-weight: 600;">Back: Mercury</p>
+      </div>
+      <div class="card" style="margin-bottom: 12px;">
+        <span class="tech-badge badge-amber" style="margin-bottom: 8px;">CLOZE</span>
+        <p style="font-weight: 600; color: #0f172a; margin-top: 8px;">Front: The ______ is the hottest planet due to its thick atmosphere.</p>
+        <p style="color: #0d9488; font-weight: 600;">Back: Venus</p>
+      </div>
+      <div class="card">
+        <span class="tech-badge badge-teal" style="margin-bottom: 8px;">QA</span>
+        <p style="font-weight: 600; color: #0f172a; margin-top: 8px;">Front: What is at the center of our solar system?</p>
+        <p style="color: #0d9488; font-weight: 600;">Back: The Sun</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: API Flow Diagram -->
+<div class="slide">
+  <div class="slide-number">08 / 12</div>
+  <h2>API Request Flow</h2>
+  <div class="mermaid">
+    sequenceDiagram
+      participant U as Browser
+      participant S as Express Server
+      participant G as Gemini AI
+      participant M as Memory Storage
+
+      U->>S: POST /api/decks/generate<br>{title, text}
+      S->>S: Validate input<br>(length, type checks)
+      S->>G: generateContent(text)<br>with JSON schema
+      G-->>S: {cards: [{type, front, back}]}
+      S->>M: Save deck + cards
+      M-->>S: deckId
+      S-->>U: {success, deckId, totalGenerated}
+
+      U->>S: GET /api/decks
+      S->>M: Query all decks
+      M-->>S: decks with card counts
+      S-->>U: [{id, title, totalCards}]
+
+      U->>S: GET /api/decks/:id/cards
+      S->>M: Query cards by deck_id
+      M-->>S: cards array
+      S-->>U: [{id, type, front, back}]
+  </div>
+</div>
+
+<!-- SLIDE 9: Tech Stack Visual -->
+<div class="slide">
+  <div class="slide-number">09 / 12</div>
+  <h2>Tech Stack</h2>
+  <div class="grid-3">
+    <div class="card" style="text-align: center;">
+      <div class="feature-icon" style="background: #dbeafe; margin: 0 auto 12px;">🎨</div>
+      <h3>Frontend</h3>
+      <p>HTML5 + Tailwind CSS<br>Vanilla JavaScript<br>Google Fonts (Inter)</p>
+      <div style="margin-top: 12px;">
+        <span class="tech-badge badge-slate">HTML</span>
+        <span class="tech-badge badge-slate">Tailwind</span>
+        <span class="tech-badge badge-slate">JS</span>
+      </div>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="feature-icon" style="background: #ccfbf1; margin: 0 auto 12px;">⚙️</div>
+      <h3>Backend</h3>
+      <p>Express.js v5<br>Multer (file uploads)<br>In-memory storage</p>
+      <div style="margin-top: 12px;">
+        <span class="tech-badge badge-teal">Express</span>
+        <span class="tech-badge badge-teal">Multer</span>
+      </div>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="feature-icon" style="background: #fef3c7; margin: 0 auto 12px;">🤖</div>
+      <h3>AI</h3>
+      <p>Gemini 2.5 Flash<br>Vision API (images)<br>Structured JSON output</p>
+      <div style="margin-top: 12px;">
+        <span class="tech-badge badge-amber">Gemini</span>
+        <span class="tech-badge badge-amber">Vision</span>
+      </div>
+    </div>
+  </div>
+  <div class="grid-3" style="margin-top: 20px;">
+    <div class="card" style="text-align: center;">
+      <div class="feature-icon" style="background: #f3e8ff; margin: 0 auto 12px;">🚀</div>
+      <h3>Deployment</h3>
+      <p>Vercel (serverless)<br>GitHub (source control)<br>Auto-deploy on push</p>
+      <div style="margin-top: 12px;">
+        <span class="tech-badge badge-purple">Vercel</span>
+        <span class="tech-badge badge-purple">GitHub</span>
+      </div>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="feature-icon" style="background: #ffe4e6; margin: 0 auto 12px;">🔒</div>
+      <h3>Security</h3>
+      <p>Input validation<br>XSS escaping<br>File type filtering</p>
+      <div style="margin-top: 12px;">
+        <span class="tech-badge badge-rose">Secure</span>
+      </div>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="feature-icon" style="background: #e2e8f0; margin: 0 auto 12px;">📦</div>
+      <h3>Runtime</h3>
+      <p>Node.js ES Modules<br>dotenv (.env config)<br>JSON schema validation</p>
+      <div style="margin-top: 12px;">
+        <span class="tech-badge badge-slate">Node.js</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Deployment Flow -->
+<div class="slide">
+  <div class="slide-number">10 / 12</div>
+  <h2>Deployment Pipeline</h2>
+  <div class="mermaid">
+    graph TD
+      A["Developer pushes to GitHub"] -->|"git push"| B["Vercel detects push"]
+      B -->|"build trigger"| C["Install dependencies"]
+      C -->|"npm install"| D["Bundle server.js"]
+      D -->|"@vercel/node"| E["Deploy to edge network"]
+      E -->|"cold start"| F["Express.js boots up"]
+      F -->|"ready"| G["Serves requests"]
+      G -->|"API call"| H["Gemini AI"]
+      H -->|"response"| G
+      G -->|"JSON"| I["Browser renders"]
+      style A fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+      style B fill:#f3e8ff,stroke:#9333ea,color:#6b21a8
+      style C fill:#f3e8ff,stroke:#9333ea,color:#6b21a8
+      style D fill:#f3e8ff,stroke:#9333ea,color:#6b21a8
+      style E fill:#f3e8ff,stroke:#9333ea,color:#6b21a8
+      style F fill:#ccfbf1,stroke:#0d9488,color:#065f46
+      style G fill:#ccfbf1,stroke:#0d9488,color:#065f46
+      style H fill:#fef3c7,stroke:#d97706,color:#92400e
+      style I fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+  </div>
+  <div style="margin-top: 24px; padding: 20px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px;">
+    <h3 style="color: #9a3412; margin-bottom: 8px;">⚠️ Important Note</h3>
+    <p style="font-size: 14px; color: #9a3412;">Vercel uses <strong>in-memory storage</strong>. Data resets on cold starts (~15 min idle). For persistent storage, connect a cloud database like Turso or Vercel Postgres.</p>
+  </div>
+</div>
+
+<!-- SLIDE 11: Data Model -->
+<div class="slide">
+  <div class="slide-number">11 / 12</div>
+  <h2>Data Model</h2>
+  <div class="mermaid">
+    erDiagram
+      DECKS {
+        int id PK
+        string title
+        datetime created_at
+      }
+      CARDS {
+        int id PK
+        int deck_id FK
+        string type
+        string front
+        string back
+      }
+      DECKS ||--o{ CARDS : "contains"
+  </div>
+  <div class="grid-2" style="margin-top: 20px;">
+    <div>
+      <h3>In-Memory Storage</h3>
+      <div class="code-block">
+        <span class="code-comment">// Arrays hold data at runtime</span><br>
+        <span class="code-keyword">let</span> decks = [];<br>
+        <span class="code-keyword">let</span> cards = [];<br>
+        <span class="code-keyword">let</span> nextDeckId = <span class="code-number">1</span>;<br>
+        <span class="code-keyword">let</span> nextCardId = <span class="code-number">1</span>;
+      </div>
+    </div>
+    <div>
+      <h3>Query Pattern</h3>
+      <div class="code-block">
+        <span class="code-comment">// Filter cards by deck</span><br>
+        cards.filter(c => c.deck_id === id)<br><br>
+        <span class="code-comment">// Count cards per deck</span><br>
+        decks.map(d => ({<br>
+        &nbsp;&nbsp;...d,<br>
+        &nbsp;&nbsp;totalCards: cards.filter(<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;c => c.deck_id === d.id<br>
+        &nbsp;&nbsp;).length<br>
+        }))
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Summary -->
+<div class="slide" style="background: linear-gradient(135deg, #f0fdfa 0%, #f5f6f8 50%, #f0fdfa 100%);">
+  <div class="slide-number">12 / 12</div>
+  <h2>Summary</h2>
+  <div class="grid-3" style="margin-top: 20px;">
+    <div class="card" style="text-align: center;">
+      <div class="stat-number">5s</div>
+      <div class="stat-label">Text to flashcards</div>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="stat-number">0</div>
+      <div class="stat-label">Manual card writing</div>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div class="stat-number">2</div>
+      <div class="stat-label">Input types (text + image)</div>
+    </div>
+  </div>
+  <div style="margin-top: 40px;">
+    <h3>Key Takeaways</h3>
+    <ul>
+      <li>AI automates flashcard creation from any content</li>
+      <li>Gemini 2.5 Flash provides fast, structured responses</li>
+      <li>Express.js + Vercel = simple, scalable deployment</li>
+      <li>CSS 3D transforms create smooth card flip animations</li>
+      <li>In-memory storage keeps it simple (add a database for production)</li>
+    </ul>
+  </div>
+  <div style="margin-top: 30px;">
+    <p><strong>Live app:</strong> <span class="accent">https://ai-flashcard-generator-nine.vercel.app</span></p>
+  </div>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#ccfbf1',
+      primaryTextColor: '#0f172a',
+      primaryBorderColor: '#0d9488',
+      lineColor: '#94a3b8',
+      secondaryColor: '#dbeafe',
+      tertiaryColor: '#f3e8ff',
+      fontFamily: 'Inter, sans-serif'
+    },
+    flowchart: { curve: 'basis', padding: 20 },
+    sequence: { mirrorActors: false, messageMargin: 40 }
+  });
+</script>
+
+</body>
+</html>
