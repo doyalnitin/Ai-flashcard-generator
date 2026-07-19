@@ -8,76 +8,132 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-    .btn-purple { background: #8e51ff; border-bottom: 2px solid #7f22fe; }
-    .btn-purple:hover { background: #7c3aed; }
-    .hero-bg { background: linear-gradient(180deg, #fafafa 0%, #f3f0ff 100%); }
-    .card-hover { transition: all 0.2s ease; }
-    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+    html { scroll-behavior: smooth; }
+
+    .btn-purple { background: #8e51ff; border-bottom: 3px solid #7c22e0; }
+    .btn-purple:hover { background: #7c3aed; transform: translateY(-1px); }
+    .btn-purple:active { transform: translateY(0); border-bottom-width: 1px; }
+
+    .hero-bg { background: linear-gradient(180deg, #fafafa 0%, #f3f0ff 50%, #ede9fe 100%); }
+
+    /* Flashcard 3D */
     .perspective { perspective: 1200px; }
-    .rotate-y-180 { transform: rotateY(180deg); }
-    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
     .card-3d { transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-    @keyframes float { 0%,100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-12px) rotate(5deg); } }
-    .float-1 { animation: float 4s ease-in-out infinite; }
-    .float-2 { animation: float 4s ease-in-out infinite 0.7s; }
-    .float-3 { animation: float 4s ease-in-out infinite 1.4s; }
-    .flashcard-front, .flashcard-back { backface-visibility: hidden; position: absolute; inset: 0; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .flashcard-front, .flashcard-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; position: absolute; inset: 0; border-radius: 24px; }
     .flashcard-back { transform: rotateY(180deg); }
-    .globe-section { background: #1a1a2e; }
-    .footer-bg { background: #ede9fe; }
-    input:focus, textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(142,81,255,0.2); border-color: #8e51ff; }
-    .nav-dropdown { display: none; }
-    .nav-item:hover .nav-dropdown { display: block; }
-    .logo-scroll { display: flex; gap: 40px; animation: scroll 20s linear infinite; }
-    @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    .step-card { background: white; border: 1px solid #f0f0f0; border-radius: 20px; overflow: hidden; }
-    .step-illustration { background: #f8f7ff; padding: 40px; display: flex; align-items: center; justify-content: center; min-height: 200px; }
+
+    /* Float animations */
+    @keyframes float1 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
+    @keyframes float2 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(-4deg); } }
+    @keyframes float3 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(2deg); } }
+    .float-1 { animation: float1 5s ease-in-out infinite; }
+    .float-2 { animation: float2 6s ease-in-out infinite 0.5s; }
+    .float-3 { animation: float3 4.5s ease-in-out infinite 1s; }
+    .float-4 { animation: float2 5.5s ease-in-out infinite 1.5s; }
+
+    /* Globe orbit */
+    @keyframes orbit { 0% { transform: rotate(0deg) translateX(140px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(140px) rotate(-360deg); } }
+    .orbit-tag { position: absolute; top: 50%; left: 50%; animation: orbit linear infinite; }
+    .orbit-tag:nth-child(1) { animation-duration: 25s; }
+    .orbit-tag:nth-child(2) { animation-duration: 30s; animation-delay: -3s; }
+    .orbit-tag:nth-child(3) { animation-duration: 22s; animation-delay: -7s; }
+    .orbit-tag:nth-child(4) { animation-duration: 28s; animation-delay: -12s; }
+    .orbit-tag:nth-child(5) { animation-duration: 20s; animation-delay: -5s; }
+    .orbit-tag:nth-child(6) { animation-duration: 32s; animation-delay: -15s; }
+    .orbit-tag:nth-child(7) { animation-duration: 26s; animation-delay: -9s; }
+    .orbit-tag:nth-child(8) { animation-duration: 24s; animation-delay: -2s; }
+    .orbit-tag:nth-child(9) { animation-duration: 35s; animation-delay: -18s; }
+    .orbit-tag:nth-child(10) { animation-duration: 21s; animation-delay: -8s; }
+
+    /* Logo scroll */
+    .logo-track { display: flex; gap: 60px; animation: logoScroll 30s linear infinite; width: max-content; }
+    @keyframes logoScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* Pulse ring on globe */
+    @keyframes pulseRing { 0% { transform: scale(1); opacity: 0.3; } 100% { transform: scale(1.3); opacity: 0; } }
+    .pulse-ring { animation: pulseRing 3s ease-out infinite; }
+
+    /* Card hover glow */
+    .step-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .step-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
+
+    /* Gradient text */
+    .gradient-text { background: linear-gradient(135deg, #8e51ff, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* Typing animation for hero */
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+    .cursor-blink::after { content: '|'; animation: blink 1s step-end infinite; color: #8e51ff; font-weight: 300; }
+
+    input:focus, textarea:focus { outline: none; box-shadow: 0 0 0 3px rgba(142,81,255,0.15); border-color: #8e51ff; }
+
+    .nav-dropdown { opacity: 0; visibility: hidden; transform: translateY(8px); transition: all 0.2s ease; }
+    .nav-item:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+
+    .globe-section { background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+    .footer-bg { background: #f5f3ff; }
+
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 3px; }
+
+    /* Hero badge shimmer */
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    .shimmer { background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer 3s infinite; }
   </style>
 </head>
-<body>
+<body class="bg-white">
 
   <!-- Navigation -->
-  <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-8">
-        <a href="#" class="flex items-center gap-2">
-          <div class="w-7 h-7 rounded-lg bg-gray-900 flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M9 9h6M9 13h4"/></svg>
+  <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100/80">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-10">
+        <a href="#" class="flex items-center gap-2.5 group">
+          <div class="w-8 h-8 rounded-xl bg-gray-900 flex items-center justify-center group-hover:bg-violet-600 transition-colors duration-300">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M9 9h6M9 13h4"/></svg>
           </div>
-          <span class="font-bold text-gray-900">flashmind</span>
+          <span class="font-bold text-gray-900 text-lg tracking-tight">flashmind</span>
         </a>
         <div class="hidden md:flex items-center gap-1">
           <div class="nav-item relative">
-            <button class="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition font-medium">
+            <button class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 px-3.5 py-2 rounded-lg hover:bg-gray-50 transition font-medium">
               Features
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
             </button>
-            <div class="nav-dropdown absolute top-full left-0 pt-2">
-              <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-3 w-72">
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-violet-50 transition">
-                  <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg></div>
-                  <div><div class="font-semibold text-sm text-gray-900">Highlight</div><div class="text-xs text-gray-500">Understand your notes</div></div>
+            <div class="nav-dropdown absolute top-full left-0 pt-3">
+              <div class="bg-white rounded-2xl shadow-2xl shadow-gray-200/60 border border-gray-100 p-2 w-72">
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-violet-50 transition group">
+                  <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center group-hover:bg-violet-200 transition"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg></div>
+                  <div><div class="font-semibold text-sm text-gray-900">Highlight</div><div class="text-xs text-gray-400">Understand your notes</div></div>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-yellow-50 transition">
-                  <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M9 9h6M9 13h4"/></svg></div>
-                  <div><div class="font-semibold text-sm text-gray-900">Generate flashcards</div><div class="text-xs text-gray-500">Quality flashcards in seconds</div></div>
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-yellow-50 transition group">
+                  <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center group-hover:bg-yellow-200 transition"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M9 9h6M9 13h4"/></svg></div>
+                  <div><div class="font-semibold text-sm text-gray-900">Generate flashcards</div><div class="text-xs text-gray-400">Quality cards in seconds</div></div>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-sky-50 transition">
-                  <div class="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></div>
-                  <div><div class="font-semibold text-sm text-gray-900">Study effectively</div><div class="text-xs text-gray-500">With spaced repetition</div></div>
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-sky-50 transition group">
+                  <div class="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center group-hover:bg-sky-200 transition"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></div>
+                  <div><div class="font-semibold text-sm text-gray-900">Study effectively</div><div class="text-xs text-gray-400">With spaced repetition</div></div>
                 </a>
-                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-green-50 transition">
-                  <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></div>
-                  <div><div class="font-semibold text-sm text-gray-900">Quizzes</div><div class="text-xs text-gray-500">Test your knowledge</div></div>
+                <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-green-50 transition group">
+                  <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg></div>
+                  <div><div class="font-semibold text-sm text-gray-900">Quizzes</div><div class="text-xs text-gray-400">Test your knowledge</div></div>
                 </a>
               </div>
             </div>
           </div>
-          <a href="#how-it-works" class="text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition font-medium">About us</a>
+          <a href="#how-it-works" class="text-sm text-gray-500 hover:text-gray-900 px-3.5 py-2 rounded-lg hover:bg-gray-50 transition font-medium">How it works</a>
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <button class="btn-purple text-white font-semibold text-sm py-2 px-5 rounded-xl transition active:scale-[0.97]">Get started</button>
+        <button class="btn-purple text-white font-semibold text-sm py-2.5 px-6 rounded-xl transition-all duration-200">Get started</button>
       </div>
     </div>
   </nav>
@@ -86,67 +142,82 @@
   <section class="hero-bg relative overflow-hidden">
     <!-- Floating Icons -->
     <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-16 left-[15%] float-1">
-        <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center shadow-sm border border-yellow-200"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg></div>
+      <div class="absolute top-20 left-[12%] float-1">
+        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-200/40 border border-yellow-100"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg></div>
       </div>
-      <div class="absolute top-24 right-[12%] float-2">
-        <div class="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center shadow-sm border border-violet-200"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+      <div class="absolute top-28 right-[10%] float-2">
+        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-violet-200/40 border border-violet-100"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
       </div>
-      <div class="absolute bottom-32 left-[10%] float-3">
-        <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center shadow-sm border border-teal-200"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M9 9h6M9 13h4"/></svg></div>
+      <div class="absolute bottom-40 left-[8%] float-3">
+        <div class="w-11 h-11 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-teal-200/40 border border-teal-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M9 9h6M9 13h4"/></svg></div>
       </div>
-      <div class="absolute bottom-20 right-[18%] float-1">
-        <div class="w-11 h-11 bg-pink-100 rounded-xl flex items-center justify-center shadow-sm border border-pink-200"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      <div class="absolute bottom-32 right-[14%] float-4">
+        <div class="w-13 h-13 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-pink-200/40 border border-pink-100"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      </div>
+      <div class="absolute top-40 left-[28%] float-2 hidden lg:block">
+        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-200/40 border border-blue-100"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
       </div>
     </div>
 
-    <div class="max-w-4xl mx-auto px-6 pt-24 pb-16 text-center relative z-10">
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-tight mb-5">
-        Generate quality<br>flashcards <span class="text-yellow-500 underline decoration-yellow-300 decoration-4 underline-offset-4">in seconds.</span>
+    <div class="max-w-4xl mx-auto px-6 pt-28 pb-8 text-center relative z-10">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 bg-white/70 backdrop-blur border border-violet-200/50 text-violet-700 text-xs font-semibold px-4 py-2 rounded-full mb-8 shadow-sm">
+        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+        Trusted by 1.2M+ students worldwide
+      </div>
+      <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.08] mb-6 tracking-tight">
+        Generate quality<br>flashcards <span class="text-yellow-400 underline decoration-yellow-300 decoration-[3px] underline-offset-8">in seconds.</span>
       </h1>
-      <p class="text-lg text-gray-500 mb-8">Upload your notes and start generating flashcards</p>
+      <p class="text-lg text-gray-500 mb-10 max-w-md mx-auto leading-relaxed">Upload your notes, images, or documents and let AI create perfect study cards for you.</p>
 
-      <button id="btn-hero" class="btn-purple text-white font-semibold text-base py-3 px-7 rounded-xl inline-flex items-center gap-2 transition active:scale-[0.97]">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg>
-        Upload your Document
-      </button>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button id="btn-hero" class="btn-purple text-white font-semibold text-base py-3.5 px-8 rounded-xl inline-flex items-center gap-2.5 transition-all duration-200 shadow-lg shadow-violet-300/30">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg>
+          Upload your Document
+        </button>
+        <a href="#how-it-works" class="text-sm font-semibold text-gray-600 hover:text-violet-600 transition px-4 py-3.5 inline-flex items-center gap-1.5">
+          See how it works
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
+      </div>
     </div>
 
     <!-- App Preview Screenshot -->
-    <div class="max-w-5xl mx-auto px-6 pb-16">
-      <div class="bg-white rounded-2xl shadow-2xl shadow-gray-300/50 border border-gray-200 overflow-hidden">
-        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 flex items-center gap-2">
+    <div class="max-w-5xl mx-auto px-6 pb-20 pt-8">
+      <div class="bg-white rounded-2xl shadow-2xl shadow-gray-300/40 border border-gray-200/80 overflow-hidden reveal">
+        <div class="bg-gray-50 border-b border-gray-200/80 px-4 py-2.5 flex items-center gap-2">
           <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div></div>
           <div class="flex-1 text-center text-xs text-gray-400 font-medium">flashmind.app</div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 min-h-[300px]">
-          <!-- Left Sidebar -->
-          <div class="bg-gray-50 border-r border-gray-100 p-4 hidden md:block">
-            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
-              <div class="w-6 h-6 rounded bg-violet-500 flex items-center justify-center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="3"/></svg></div>
-              <span class="text-xs font-semibold text-gray-700">flashmind</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 min-h-[320px]">
+          <!-- Sidebar -->
+          <div class="bg-gray-50/80 border-r border-gray-100 p-4 hidden md:block">
+            <div class="flex items-center gap-2.5 mb-5 pb-4 border-b border-gray-200/60">
+              <div class="w-7 h-7 rounded-lg bg-violet-500 flex items-center justify-center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="3"/></svg></div>
+              <span class="text-xs font-bold text-gray-700">flashmind</span>
             </div>
             <div class="space-y-1">
-              <div class="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-white text-xs font-medium text-gray-700 shadow-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Home</div>
-              <div class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/></svg> Heart Anatomy</div>
+              <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-white text-xs font-medium text-gray-700 shadow-sm border border-gray-100"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Home</div>
+              <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-gray-500 hover:bg-white transition"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/></svg> Heart Anatomy</div>
+              <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-gray-500 hover:bg-white transition"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> Biology 101</div>
             </div>
           </div>
           <!-- Main Content -->
-          <div class="md:col-span-2 p-5">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="font-bold text-gray-900">Heart Anatomy</h3>
+          <div class="md:col-span-2 p-6">
+            <div class="flex items-center justify-between mb-5">
+              <h3 class="font-bold text-gray-900 text-sm">Heart Anatomy</h3>
               <div class="flex gap-2">
-                <span class="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500">Source 8%</span>
-                <span class="text-xs bg-violet-100 px-2 py-1 rounded text-violet-700 font-medium">Flashcards 8</span>
-                <span class="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500">Quizzes</span>
+                <span class="text-[10px] bg-gray-100 px-2.5 py-1 rounded-md text-gray-500 font-medium">Source 8%</span>
+                <span class="text-[10px] bg-violet-100 px-2.5 py-1 rounded-md text-violet-700 font-semibold">Flashcards 8</span>
+                <span class="text-[10px] bg-gray-100 px-2.5 py-1 rounded-md text-gray-500 font-medium">Quizzes</span>
               </div>
             </div>
-            <div class="bg-gray-50 rounded-xl p-4 text-xs text-gray-600 leading-relaxed mb-4">
-              <span class="bg-yellow-200 px-1 rounded font-medium">Heart location</span> The heart is located in the <span class="bg-yellow-200 px-1 rounded font-medium">mediastinum</span>, in the thoracic cavity. It sits behind the <span class="bg-yellow-200 px-1 rounded font-medium">sternum</span> and is enclosed in a double-walled sac called the <span class="bg-yellow-200 px-1 rounded font-medium">pericardium</span>.
+            <div class="bg-gray-50 rounded-xl p-4 text-xs text-gray-600 leading-relaxed mb-5 border border-gray-100">
+              <span class="bg-yellow-200/70 px-1 rounded font-medium">Heart location</span> The heart is located in the <span class="bg-yellow-200/70 px-1 rounded font-medium">mediastinum</span>, in the thoracic cavity. It sits behind the <span class="bg-yellow-200/70 px-1 rounded font-medium">sternum</span> and is enclosed in a double-walled sac called the <span class="bg-yellow-200/70 px-1 rounded font-medium">pericardium</span>.
             </div>
             <div class="flex gap-2">
-              <button class="bg-yellow-100 text-yellow-700 text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg> Highlight Text</button>
-              <button class="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-lg">Quizzation Text</button>
+              <button class="bg-yellow-100 text-yellow-700 text-xs font-medium px-3.5 py-2 rounded-lg flex items-center gap-1.5 border border-yellow-200/50"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg> Highlight Text</button>
+              <button class="bg-gray-100 text-gray-600 text-xs font-medium px-3.5 py-2 rounded-lg border border-gray-200/50">Quiz me</button>
             </div>
           </div>
         </div>
@@ -155,169 +226,211 @@
   </section>
 
   <!-- Logo Strip -->
-  <section class="py-10 border-b border-gray-100 bg-white">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-40 mb-4">
-        <span class="font-bold text-sm tracking-wider">POLITECNICO<br>MILANO</span>
-        <span class="font-bold text-sm">Stanford<br><span class="text-xs font-normal">MEDICINE</span></span>
-        <span class="font-bold text-sm">Imperial College<br><span class="text-xs font-normal">London</span></span>
-        <span class="font-bold text-sm">UNIVERSITÄT<br>KÖLN</span>
-        <span class="font-bold text-sm">POLITECNICO<br>MILANO</span>
-        <span class="font-bold text-sm">Stanford<br><span class="text-xs font-normal">MEDICINE</span></span>
-        <span class="font-bold text-sm">Imperial College<br><span class="text-xs font-normal">London</span></span>
+  <section class="py-12 border-b border-gray-100 bg-white overflow-hidden">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <div class="overflow-hidden mb-6">
+        <div class="logo-track">
+          <span class="font-bold text-xs tracking-wider text-gray-300 whitespace-nowrap">POLITECNICO<br>MILANO</span>
+          <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Stanford<br><span class="text-[10px] font-normal">MEDICINE</span></span>
+          <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Imperial College<br><span class="text-[10px] font-normal">London</span></span>
+          <span class="font-bold text-xs tracking-wider text-gray-300 whitespace-nowrap">UNIVERSITAT<br>KOLN</span>
+          <span class="font-bold text-xs text-gray-300 whitespace-nowrap">MIT<br><span class="text-[10px] font-normal">Engineering</span></span>
+          <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Oxford<br><span class="text-[10px] font-normal">University</span></span>
+          <!-- Duplicate for seamless loop -->
+          <span class="font-bold text-xs tracking-wider text-gray-300 whitespace-nowrap">POLITECNICO<br>MILANO</span>
+          <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Stanford<br><span class="text-[10px] font-normal">MEDICINE</span></span>
+          <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Imperial College<br><span class="text-[10px] font-normal">London</span></span>
+          <span class="font-bold text-xs tracking-wider text-gray-300 whitespace-nowrap">UNIVERSITAT<br>KOLN</span>
+          <span class="font-bold text-xs text-gray-300 whitespace-nowrap">MIT<br><span class="text-[10px] font-normal">Engineering</span></span>
+          <span class="font-bold text-xs text-gray-300 whitespace-nowrap">Oxford<br><span class="text-[10px] font-normal">University</span></span>
+        </div>
       </div>
-      <p class="text-xs text-gray-400">Loved by a community of more than <strong class="text-gray-600">1.2M+ students</strong><br>all around the globe</p>
+      <p class="text-xs text-gray-400">Loved by a community of more than <strong class="text-gray-600">1.2M+ students</strong> all around the globe</p>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section id="how-it-works" class="py-20 bg-gray-50">
+  <section id="how-it-works" class="py-24 bg-gray-50/50">
     <div class="max-w-5xl mx-auto px-6">
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center gap-2 bg-gray-200 text-gray-600 text-xs font-semibold px-4 py-2 rounded-full mb-4">
+      <div class="text-center mb-16 reveal">
+        <div class="inline-flex items-center gap-2 bg-white text-gray-600 text-xs font-semibold px-4 py-2 rounded-full mb-5 shadow-sm border border-gray-200/60">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
           How it works
         </div>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">Three simple steps</h2>
       </div>
 
       <!-- Step 1 -->
-      <div class="step-card mb-6 flex flex-col md:flex-row">
-        <div class="step-illustration md:w-1/2">
-          <div class="w-40 h-32 bg-white rounded-xl shadow-lg border border-gray-100 p-4 flex flex-col gap-2">
-            <div class="w-full h-3 bg-gray-100 rounded"></div>
-            <div class="w-3/4 h-3 bg-gray-100 rounded"></div>
-            <div class="w-full h-3 bg-violet-100 rounded"></div>
-            <div class="w-2/3 h-3 bg-gray-100 rounded"></div>
-            <div class="mt-2 flex gap-1"><div class="w-8 h-8 bg-yellow-100 rounded-lg"></div><div class="w-8 h-8 bg-violet-100 rounded-lg"></div></div>
+      <div class="step-card mb-8 flex flex-col md:flex-row bg-white rounded-3xl border border-gray-100 overflow-hidden reveal">
+        <div class="md:w-1/2 bg-gradient-to-br from-violet-50 to-purple-50 p-10 flex items-center justify-center">
+          <div class="relative">
+            <div class="w-48 h-36 bg-white rounded-2xl shadow-xl border border-gray-100 p-5 flex flex-col gap-2.5 rotate-[-2deg]">
+              <div class="w-full h-2.5 bg-gray-100 rounded-full"></div>
+              <div class="w-3/4 h-2.5 bg-gray-100 rounded-full"></div>
+              <div class="w-full h-2.5 bg-violet-200 rounded-full"></div>
+              <div class="w-2/3 h-2.5 bg-gray-100 rounded-full"></div>
+              <div class="mt-2 flex gap-2"><div class="w-9 h-9 bg-yellow-100 rounded-lg"></div><div class="w-9 h-9 bg-violet-100 rounded-lg"></div><div class="w-9 h-9 bg-teal-100 rounded-lg"></div></div>
+            </div>
+            <div class="absolute -top-3 -right-3 w-10 h-10 bg-yellow-400 rounded-xl flex items-center justify-center shadow-lg rotate-6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg></div>
           </div>
         </div>
-        <div class="md:w-1/2 p-8 flex flex-col justify-center">
-          <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-4">1</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Generate quality flashcards</h3>
-          <p class="text-sm text-gray-500 mb-4">Generate flashcards and image occlusions from a simple highlight.</p>
-          <a href="#" class="text-sm font-semibold text-gray-900 hover:text-violet-600 transition">Learn More →</a>
+        <div class="md:w-1/2 p-10 flex flex-col justify-center">
+          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-5">1</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-3">Generate quality flashcards</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-5">Upload notes or images and our AI generates flashcards and highlights in seconds.</p>
+          <a href="#" class="text-sm font-semibold text-violet-600 hover:text-violet-700 transition inline-flex items-center gap-1">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </div>
 
       <!-- Step 2 -->
-      <div class="step-card mb-6 flex flex-col md:flex-row-reverse">
-        <div class="step-illustration md:w-1/2">
-          <div class="flex gap-3">
-            <div class="w-20 h-28 bg-green-400 rounded-xl shadow-lg"></div>
-            <div class="w-20 h-28 bg-red-400 rounded-xl shadow-lg -mt-2"></div>
-            <div class="w-20 h-28 bg-blue-400 rounded-xl shadow-lg mt-2"></div>
+      <div class="step-card mb-8 flex flex-col md:flex-row-reverse bg-white rounded-3xl border border-gray-100 overflow-hidden reveal">
+        <div class="md:w-1/2 bg-gradient-to-br from-green-50 to-emerald-50 p-10 flex items-center justify-center">
+          <div class="flex gap-4">
+            <div class="w-24 h-32 bg-gradient-to-b from-green-400 to-green-500 rounded-2xl shadow-lg -rotate-3"></div>
+            <div class="w-24 h-32 bg-gradient-to-b from-red-400 to-red-500 rounded-2xl shadow-lg rotate-2 -mt-3"></div>
+            <div class="w-24 h-32 bg-gradient-to-b from-blue-400 to-blue-500 rounded-2xl shadow-lg rotate-3 mt-3"></div>
           </div>
         </div>
-        <div class="md:w-1/2 p-8 flex flex-col justify-center">
-          <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-4">2</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Study with Spaced Repetition</h3>
-          <p class="text-sm text-gray-500 mb-4">Our spaced repetition algorithm will manage your flashcard review maximizing memorization and minimizing effort!</p>
-          <a href="#" class="text-sm font-semibold text-gray-900 hover:text-violet-600 transition">Learn More →</a>
+        <div class="md:w-1/2 p-10 flex flex-col justify-center">
+          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-5">2</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-3">Study with Spaced Repetition</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-5">Our spaced repetition algorithm maximizes memorization while minimizing your study time.</p>
+          <a href="#" class="text-sm font-semibold text-violet-600 hover:text-violet-700 transition inline-flex items-center gap-1">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </div>
 
       <!-- Step 3 -->
-      <div class="step-card flex flex-col md:flex-row">
-        <div class="step-illustration md:w-1/2">
-          <div class="w-40 bg-white rounded-xl shadow-lg border border-gray-100 p-3">
-            <div class="text-xs font-semibold text-gray-700 mb-2">Quiz</div>
-            <div class="space-y-2">
-              <div class="flex items-center gap-2"><div class="w-4 h-4 border-2 border-gray-300 rounded"></div><div class="flex-1 h-2 bg-gray-100 rounded"></div></div>
-              <div class="flex items-center gap-2"><div class="w-4 h-4 border-2 border-green-500 rounded bg-green-50"></div><div class="flex-1 h-2 bg-green-100 rounded"></div></div>
-              <div class="flex items-center gap-2"><div class="w-4 h-4 border-2 border-gray-300 rounded"></div><div class="flex-1 h-2 bg-gray-100 rounded"></div></div>
-              <div class="flex items-center gap-2"><div class="w-4 h-4 border-2 border-gray-300 rounded"></div><div class="flex-1 h-2 bg-gray-100 rounded"></div></div>
+      <div class="step-card flex flex-col md:flex-row bg-white rounded-3xl border border-gray-100 overflow-hidden reveal">
+        <div class="md:w-1/2 bg-gradient-to-br from-blue-50 to-sky-50 p-10 flex items-center justify-center">
+          <div class="w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-4">
+            <div class="text-xs font-bold text-gray-700 mb-3">Quiz</div>
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-2.5"><div class="w-4 h-4 border-2 border-gray-300 rounded-md"></div><div class="flex-1 h-2 bg-gray-100 rounded-full"></div></div>
+              <div class="flex items-center gap-2.5"><div class="w-4 h-4 border-2 border-green-500 rounded-md bg-green-50"></div><div class="flex-1 h-2 bg-green-100 rounded-full"></div></div>
+              <div class="flex items-center gap-2.5"><div class="w-4 h-4 border-2 border-gray-300 rounded-md"></div><div class="flex-1 h-2 bg-gray-100 rounded-full"></div></div>
+              <div class="flex items-center gap-2.5"><div class="w-4 h-4 border-2 border-gray-300 rounded-md"></div><div class="flex-1 h-2 bg-gray-100 rounded-full"></div></div>
             </div>
           </div>
         </div>
-        <div class="md:w-1/2 p-8 flex flex-col justify-center">
-          <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-4">3</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Test your knowledge with quizzes</h3>
-          <p class="text-sm text-gray-500 mb-4">Build confidence with hundreds of quizzes. We will give you explanations for each mistake.</p>
-          <a href="#" class="text-sm font-semibold text-gray-900 hover:text-violet-600 transition">Learn More →</a>
+        <div class="md:w-1/2 p-10 flex flex-col justify-center">
+          <div class="w-9 h-9 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mb-5">3</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-3">Test with quizzes</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-5">Build confidence with quizzes. Get detailed explanations for each mistake to strengthen weak areas.</p>
+          <a href="#" class="text-sm font-semibold text-violet-600 hover:text-violet-700 transition inline-flex items-center gap-1">Learn More <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Globe Section -->
-  <section class="globe-section py-24 relative overflow-hidden">
+  <section class="globe-section py-28 relative overflow-hidden">
     <div class="max-w-6xl mx-auto px-6 text-center relative z-10">
-      <!-- Globe placeholder with tags -->
-      <div class="relative w-80 h-80 mx-auto mb-10">
-        <div class="absolute inset-0 border border-white/10 rounded-full"></div>
-        <div class="absolute inset-4 border border-white/10 rounded-full"></div>
-        <div class="absolute inset-8 border border-white/10 rounded-full"></div>
-        <div class="absolute inset-12 border border-white/20 rounded-full"></div>
-        <!-- Subject Tags -->
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">Chemistry</div>
-        <div class="absolute top-8 right-0 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">Engineering</div>
-        <div class="absolute top-1/4 -left-4 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">History</div>
-        <div class="absolute top-1/3 left-1/4 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">Medicine</div>
-        <div class="absolute top-1/2 right-0 tag-pill bg-violet-500 text-white text-[10px] px-2 py-1 rounded-full font-semibold">Math</div>
-        <div class="absolute bottom-1/3 -left-2 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">Arts</div>
-        <div class="absolute bottom-1/4 left-1/3 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">Biology</div>
-        <div class="absolute bottom-8 right-1/4 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">Law</div>
-        <div class="absolute bottom-0 left-1/4 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">Languages</div>
-        <div class="absolute bottom-4 right-0 tag-pill bg-white/10 backdrop-blur text-white text-[10px] px-2 py-1 rounded-full border border-white/20">Business</div>
+      <!-- Globe -->
+      <div class="relative w-72 h-72 mx-auto mb-12">
+        <!-- Pulse rings -->
+        <div class="absolute inset-0 border border-white/10 rounded-full pulse-ring"></div>
+        <div class="absolute inset-6 border border-white/10 rounded-full pulse-ring" style="animation-delay: 1s"></div>
+        <div class="absolute inset-12 border border-white/15 rounded-full pulse-ring" style="animation-delay: 2s"></div>
+        <div class="absolute inset-[72px] border border-white/20 rounded-full"></div>
+        <!-- Center dot -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-violet-400 rounded-full shadow-lg shadow-violet-400/50"></div>
+        <!-- Orbiting Tags -->
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">Chemistry</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-violet-500/80 backdrop-blur-sm text-white text-[10px] font-semibold px-3 py-1.5 rounded-full shadow-lg">Engineering</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">History</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">Medicine</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">Math</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">Arts</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">Biology</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">Law</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">Languages</div>
+        </div>
+        <div class="orbit-tag" style="margin-top:-14px; margin-left:-14px;">
+          <div class="bg-white/15 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/20 shadow-lg">Business</div>
+        </div>
       </div>
-      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Whatever you study<br>we have you covered.</h2>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">Whatever you study,<br>we have you covered.</h2>
       <p class="text-sm text-gray-400">Click on your subject to see what we've made for you</p>
     </div>
   </section>
 
   <!-- Made for Every Student -->
-  <section class="py-20 bg-white">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold text-gray-900 mb-3">Made for <span class="text-yellow-500">every</span> student</h2>
-      <p class="text-gray-500 mb-12 max-w-lg mx-auto">We leverage the most advanced techniques for studying effectively and retaining memory for a long time.</p>
+  <section class="py-24 bg-white">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-14 reveal">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">Made for <span class="gradient-text">every</span> student</h2>
+        <p class="text-gray-500 max-w-lg mx-auto">We leverage the most advanced techniques for studying effectively and retaining memory for a long time.</p>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100 text-left">
-          <div class="w-14 h-14 bg-violet-100 rounded-2xl flex items-center justify-center mb-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-          <h3 class="font-bold text-gray-900 mb-2">Available in any language</h3>
-          <p class="text-sm text-gray-500 mb-4">Our AI tutor speaks any language! Our students come from 100+ different countries!</p>
+        <div class="bg-gray-50 rounded-3xl p-9 border border-gray-100 text-left reveal reveal-delay-1 hover:shadow-lg hover:shadow-gray-200/40 transition-shadow duration-300">
+          <div class="w-14 h-14 bg-violet-100 rounded-2xl flex items-center justify-center mb-6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <h3 class="font-bold text-gray-900 mb-2 text-lg">Available in any language</h3>
+          <p class="text-sm text-gray-500 mb-5 leading-relaxed">Our AI tutor speaks any language. Students from 100+ countries use FlashMind daily.</p>
           <div class="flex flex-wrap gap-2">
-            <span class="text-xs bg-white border border-gray-200 px-2 py-1 rounded-full">🇪🇸 Español</span>
-            <span class="text-xs bg-white border border-gray-200 px-2 py-1 rounded-full">🇬🇧 English</span>
-            <span class="text-xs bg-white border border-gray-200 px-2 py-1 rounded-full">🇫🇮 Suomalainen</span>
-            <span class="text-xs bg-white border border-gray-200 px-2 py-1 rounded-full">🇮🇹 Italiano</span>
-            <span class="text-xs bg-white border border-gray-200 px-2 py-1 rounded-full">🇸🇦 العربية</span>
+            <span class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full font-medium">Espanol</span>
+            <span class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full font-medium">English</span>
+            <span class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full font-medium">Suomalainen</span>
+            <span class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full font-medium">Italiano</span>
+            <span class="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full font-medium">Arabic</span>
           </div>
         </div>
-        <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100 text-left">
-          <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-          <h3 class="font-bold text-gray-900 mb-2">Proven by science</h3>
-          <p class="text-sm text-gray-500 mb-4">Our spaced repetition algorithm maximizes memorization and minimizes effort!</p>
-          <a href="#" class="text-sm font-semibold text-gray-900 hover:text-violet-600 transition">Learn more →</a>
+        <div class="bg-gray-50 rounded-3xl p-9 border border-gray-100 text-left reveal reveal-delay-2 hover:shadow-lg hover:shadow-gray-200/40 transition-shadow duration-300">
+          <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <h3 class="font-bold text-gray-900 mb-2 text-lg">Proven by science</h3>
+          <p class="text-sm text-gray-500 mb-5 leading-relaxed">Our spaced repetition algorithm maximizes memorization while minimizing effort.</p>
+          <a href="#" class="text-sm font-semibold text-violet-600 hover:text-violet-700 transition inline-flex items-center gap-1">Learn more <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="py-12 bg-white text-center">
-    <button id="btn-cta" class="btn-purple text-white font-semibold text-base py-3 px-7 rounded-xl inline-flex items-center gap-2 transition active:scale-[0.97]">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
-      Try it now for free
-    </button>
+  <section class="py-16 bg-white text-center">
+    <div class="reveal">
+      <button id="btn-cta" class="btn-purple text-white font-semibold text-base py-4 px-10 rounded-xl inline-flex items-center gap-2.5 transition-all duration-200 shadow-lg shadow-violet-300/30">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
+        Try it now for free
+      </button>
+    </div>
   </section>
 
   <!-- App Section (Create + Study) -->
   <main class="max-w-7xl mx-auto px-6 py-16">
     <!-- Create + Preview -->
-    <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 p-8 mb-10">
+    <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/40 border border-gray-100 p-8 mb-10 reveal">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div>
-          <h2 class="text-xl font-bold text-gray-900 mb-5">Create flashcards</h2>
-          <input id="input-title" type="text" placeholder="Give it a name" class="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm border border-gray-200 font-medium placeholder-gray-400 transition mb-3">
-          <textarea id="input-text" rows="4" placeholder="Paste your notes here..." class="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm border border-gray-200 font-medium placeholder-gray-400 resize-none transition mb-4"></textarea>
-          <div id="drop-zone" class="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center cursor-pointer hover:border-violet-400 hover:bg-violet-50/30 transition mb-5">
+          <h2 class="text-xl font-bold text-gray-900 mb-6">Create flashcards</h2>
+          <input id="input-title" type="text" placeholder="Give it a name" class="w-full px-4 py-3.5 bg-gray-50 rounded-xl text-sm border border-gray-200 font-medium placeholder-gray-400 transition mb-3">
+          <textarea id="input-text" rows="4" placeholder="Paste your notes here..." class="w-full px-4 py-3.5 bg-gray-50 rounded-xl text-sm border border-gray-200 font-medium placeholder-gray-400 resize-none transition mb-4"></textarea>
+          <div id="drop-zone" class="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center cursor-pointer hover:border-violet-400 hover:bg-violet-50/30 transition-all duration-300 mb-5">
             <input type="file" id="file-input" accept=".png,.jpg,.jpeg,.webp,.gif" class="hidden">
-            <p class="text-sm text-gray-400">Drop a <strong class="text-gray-600">photo</strong> here, or <span class="text-violet-600 font-semibold">browse</span></p>
+            <div class="flex flex-col items-center gap-2">
+              <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+              <p class="text-sm text-gray-400">Drop a <strong class="text-gray-600">photo</strong> here, or <span class="text-violet-600 font-semibold">browse</span></p>
+            </div>
             <p id="file-name" class="text-sm text-violet-600 mt-2 hidden font-semibold"></p>
           </div>
           <div class="flex gap-3">
-            <button id="btn-generate" class="flex-1 btn-purple text-white font-semibold py-3 px-6 rounded-xl transition active:scale-[0.98]">Generate from text</button>
-            <button id="btn-upload" class="flex-1 bg-violet-600 text-white hover:bg-violet-700 font-semibold py-3 px-6 rounded-xl transition active:scale-[0.98] hidden">Generate from file</button>
+            <button id="btn-generate" class="flex-1 btn-purple text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 active:scale-[0.98]">Generate from text</button>
+            <button id="btn-upload" class="flex-1 bg-violet-600 text-white hover:bg-violet-700 font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 active:scale-[0.98] hidden">Generate from file</button>
           </div>
         </div>
         <div class="flex flex-col items-center justify-center">
@@ -338,29 +451,34 @@
             </div>
           </div>
           <div id="scheduler-actions" class="invisible opacity-0 transition-all duration-300 w-full max-w-sm flex gap-2 mt-6">
-            <button class="flex-1 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 font-semibold py-2.5 rounded-xl text-sm transition">Again</button>
-            <button class="flex-1 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200 font-semibold py-2.5 rounded-xl text-sm transition">Hard</button>
-            <button class="flex-1 bg-green-50 text-green-600 hover:bg-green-100 border border-green-200 font-semibold py-2.5 rounded-xl text-sm transition">Good</button>
-            <button class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 font-semibold py-2.5 rounded-xl text-sm transition">Easy</button>
+            <button class="flex-1 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Again</button>
+            <button class="flex-1 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Hard</button>
+            <button class="flex-1 bg-green-50 text-green-600 hover:bg-green-100 border border-green-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Good</button>
+            <button class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200/60 font-semibold py-2.5 rounded-xl text-sm transition">Easy</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Saved Decks -->
-    <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 p-8">
-      <h2 class="text-xl font-bold text-gray-900 mb-5">Your study sets</h2>
+    <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/40 border border-gray-100 p-8 reveal">
+      <h2 class="text-xl font-bold text-gray-900 mb-6">Your study sets</h2>
       <div id="decks-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="footer-bg py-12">
-    <div class="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
-      <div><h5 class="font-semibold text-gray-900 mb-3">About us</h5><ul class="space-y-2 text-gray-600"><li><a href="#" class="hover:text-violet-600 transition">Community</a></li><li><a href="#" class="hover:text-violet-600 transition">Blog</a></li></ul></div>
-      <div><h5 class="font-semibold text-gray-900 mb-3">Help</h5><ul class="space-y-2 text-gray-600"><li><a href="#" class="hover:text-violet-600 transition">Help & Tutorials</a></li><li><a href="#" class="hover:text-violet-600 transition">Discord</a></li><li><a href="#" class="hover:text-violet-600 transition">Contacts</a></li></ul></div>
-      <div><h5 class="font-semibold text-gray-900 mb-3">Social</h5><ul class="space-y-2 text-gray-600"><li><a href="#" class="hover:text-violet-600 transition">Instagram</a></li><li><a href="#" class="hover:text-violet-600 transition">TikTok</a></li><li><a href="#" class="hover:text-violet-600 transition">LinkedIn</a></li></ul></div>
-      <div><h5 class="font-semibold text-gray-900 mb-3">Policies</h5><ul class="space-y-2 text-gray-600"><li><a href="#" class="hover:text-violet-600 transition">Terms & Conditions</a></li><li><a href="#" class="hover:text-violet-600 transition">Privacy Policy</a></li></ul></div>
+  <footer class="footer-bg py-16">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm mb-12">
+        <div><h5 class="font-semibold text-gray-900 mb-4">About us</h5><ul class="space-y-2.5 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Community</a></li><li><a href="#" class="hover:text-violet-600 transition">Blog</a></li></ul></div>
+        <div><h5 class="font-semibold text-gray-900 mb-4">Help</h5><ul class="space-y-2.5 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Help & Tutorials</a></li><li><a href="#" class="hover:text-violet-600 transition">Discord</a></li><li><a href="#" class="hover:text-violet-600 transition">Contacts</a></li></ul></div>
+        <div><h5 class="font-semibold text-gray-900 mb-4">Social</h5><ul class="space-y-2.5 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Instagram</a></li><li><a href="#" class="hover:text-violet-600 transition">TikTok</a></li><li><a href="#" class="hover:text-violet-600 transition">LinkedIn</a></li></ul></div>
+        <div><h5 class="font-semibold text-gray-900 mb-4">Policies</h5><ul class="space-y-2.5 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Terms & Conditions</a></li><li><a href="#" class="hover:text-violet-600 transition">Privacy Policy</a></li></ul></div>
+      </div>
+      <div class="border-t border-violet-200/40 pt-8 text-center">
+        <p class="text-xs text-gray-400">&copy; 2026 FlashMind. All rights reserved.</p>
+      </div>
     </div>
   </footer>
 
@@ -380,14 +498,20 @@
       actions.classList.toggle('opacity-0', !isFlipped);
     });
 
+    // Scroll reveal
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
     async function fetchAllDecks() {
       try {
         const r = await fetch('/api/decks');
         const d = await r.json();
         const el = document.getElementById('decks-list');
-        if (!d.length) { el.innerHTML = '<p class="text-gray-400 text-center py-8 col-span-full">No flashcards yet.</p>'; return; }
+        if (!d.length) { el.innerHTML = '<p class="text-gray-400 text-center py-10 col-span-full text-sm">No flashcards yet. Create your first deck above!</p>'; return; }
         const c = ['from-violet-500 to-purple-600','from-pink-500 to-rose-600','from-blue-500 to-cyan-600','from-teal-500 to-emerald-600','from-amber-500 to-orange-600'];
-        el.innerHTML = d.map((x,i) => `<button data-deck-id="${x.id}" class="deck-btn text-left rounded-2xl p-5 text-white card-hover bg-gradient-to-br ${c[i%c.length]} relative overflow-hidden"><div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div><div class="relative z-10"><p class="font-bold text-lg mb-1 truncate">${esc(x.title)}</p><div class="flex items-center justify-between"><span class="text-white/70 text-xs">${new Date(x.created_at).toLocaleDateString()}</span><span class="bg-white/20 text-xs font-semibold px-3 py-1 rounded-full">${x.totalCards} cards</span></div></div></button>`).join('');
+        el.innerHTML = d.map((x,i) => `<button data-deck-id="${x.id}" class="deck-btn text-left rounded-2xl p-5 text-white bg-gradient-to-br ${c[i%c.length]} relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-gray-300/30"><div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div><div class="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-6 -translate-x-6"></div><div class="relative z-10"><p class="font-bold text-lg mb-2 truncate">${esc(x.title)}</p><div class="flex items-center justify-between"><span class="text-white/60 text-xs">${new Date(x.created_at).toLocaleDateString()}</span><span class="bg-white/20 backdrop-blur text-xs font-semibold px-3 py-1 rounded-full">${x.totalCards} cards</span></div></div></button>`).join('');
         el.querySelectorAll('.deck-btn').forEach(b => b.addEventListener('click', () => loadDeck(b.dataset.deckId)));
       } catch(e) {}
     }
@@ -406,7 +530,7 @@
     function reset() { isFlipped=false; inner.classList.remove('rotate-y-180'); actions.classList.add('invisible','opacity-0'); }
     function render() {
       if (!activeDeckCards.length) return;
-      if (currentIndex>=activeDeckCards.length) { document.querySelector('.perspective').innerHTML='<div class="bg-gradient-to-br from-teal-400 to-emerald-500 rounded-3xl p-8 text-center text-white shadow-xl"><div class="text-5xl mb-4">🎉</div><h3 class="text-2xl font-bold mb-2">All done!</h3><button onclick="location.reload()" class="bg-white text-emerald-600 font-bold py-3 px-8 rounded-xl mt-4">Back</button></div>'; return; }
+      if (currentIndex>=activeDeckCards.length) { document.querySelector('.perspective').innerHTML='<div class="bg-gradient-to-br from-teal-400 to-emerald-500 rounded-3xl p-10 text-center text-white shadow-xl"><div class="text-5xl mb-4">🎉</div><h3 class="text-2xl font-bold mb-2">All done!</h3><p class="text-white/70 text-sm mb-5">You reviewed all cards in this deck</p><button onclick="location.reload()" class="bg-white text-emerald-600 font-bold py-3 px-8 rounded-xl hover:shadow-lg transition">Back</button></div>'; return; }
       const c=activeDeckCards[currentIndex];
       document.getElementById('card-badge').textContent=c.type;
       document.getElementById('card-progress').textContent=`${currentIndex+1} / ${activeDeckCards.length}`;
