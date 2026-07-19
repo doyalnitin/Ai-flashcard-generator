@@ -1,5 +1,5 @@
 import express from 'express';
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -24,110 +24,83 @@ const upload = multer({
   }
 });
 
-// In-memory storage (resets on cold start on Vercel)
 let decks = [];
 let cards = [];
 let nextDeckId = 1;
 let nextCardId = 1;
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-function extractText(response) {
-  try {
-    if (response.candidates && response.candidates[0] && response.candidates[0].content && response.candidates[0].content.parts) {
-      return response.candidates[0].content.parts[0].text;
+function imageToGenerativePart(buffer, mimeType) {
+  return {
+    inlineData: {
+      data: buffer.toString('base64'),
+      mimeType
     }
-    if (typeof response.text === 'function') return response.text();
-    if (response.text) return response.text;
-  } catch (e) {
-    console.error('Response extraction error:', e);
-  }
-  throw new Error('Could not extract text from Gemini response');
+  };
 }
 
-async function generateCardsFromAI(sourceText) {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: `Generate flashcards from this text. Return JSON only, no markdown:\n\n${sourceText}`,
-    config: {
-      systemInstruction: `You are an expert flashcard generator. Convert text into atomic flashcards. Rules:
-1. Each card = ONE concept
-2. Use "QA" for questions, "CLOZE" for fill-in-blank
-3. For CLOZE: use "______" in front, isolated term in back
-4. Return valid JSON: {"cards":[{"type":"QA","front":"...","back":"..."}]}`,
+const FLASHCARD_PROMPT = `You are an expert flashcard generator. Convert the provided content into atomic flashcards.
+
+Rules:
+1. Each card must contain exactly ONE atomic concept or fact.
+2. Use "QA" for direct question-answer cards.
+3. Use "CLOZE" for fill-in-the-blank cards. Replace key terms with "______" in the front, provide the term in the back.
+4. Keep fronts clear and unambiguous.
+
+Return ONLY valid JSON (no markdown, no code fences):
+{"cards":[{"type":"QA","front":"...","back":"..."}]}`;
+
+async function generateCardsFromText(text) {
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-2.0-flash',
+    generationConfig: {
       temperature: 0.2,
-      responseMimeType: "application/json",
+      responseMimeType: 'application/json',
       responseSchema: {
-        type: Type.OBJECT,
+        type: 'OBJECT',
         properties: {
           cards: {
-            type: Type.ARRAY,
+            type: 'ARRAY',
             items: {
-              type: Type.OBJECT,
+              type: 'OBJECT',
               properties: {
-                type: { type: Type.STRING, enum: ["QA", "CLOZE"] },
-                front: { type: Type.STRING },
-                back: { type: Type.STRING },
+                type: { type: 'STRING' },
+                front: { type: 'STRING' },
+                back: { type: 'STRING' }
               },
-              required: ["type", "front", "back"],
-            },
-          },
+              required: ['type', 'front', 'back']
+            }
+          }
         },
-        required: ["cards"],
-      },
-    },
+        required: ['cards']
+      }
+    }
   });
 
-  const text = extractText(response);
-  const result = JSON.parse(text);
-  return result.cards;
+  const result = await model.generateContent(FLASHCARD_PROMPT + '\n\n' + text);
+  const response = result.response;
+  const data = JSON.parse(response.text());
+  return data.cards;
 }
 
 async function generateCardsFromImage(buffer, mimeType) {
-  const base64Data = buffer.toString('base64');
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: [
-      {
-        role: "user",
-        parts: [
-          { text: "Generate flashcards from this image. Return JSON only, no markdown." },
-          { inlineData: { mimeType, data: base64Data } }
-        ]
-      }
-    ],
-    config: {
-      systemInstruction: `You are an expert flashcard generator. Convert text into atomic flashcards. Rules:
-1. Each card = ONE concept
-2. Use "QA" for questions, "CLOZE" for fill-in-blank
-3. For CLOZE: use "______" in front, isolated term in back
-4. Return valid JSON: {"cards":[{"type":"QA","front":"...","back":"..."}]}`,
-      temperature: 0.2,
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          cards: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                type: { type: Type.STRING, enum: ["QA", "CLOZE"] },
-                front: { type: Type.STRING },
-                back: { type: Type.STRING },
-              },
-              required: ["type", "front", "back"],
-            },
-          },
-        },
-        required: ["cards"],
-      },
-    },
-  });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const imagePart = imageToGenerativePart(buffer, mimeType);
 
-  const text = extractText(response);
-  const result = JSON.parse(text);
-  return result.cards;
+  const result = await model.generateContent([
+    FLASHCARD_PROMPT + '\n\nGenerate flashcards from the content in this image.',
+    imagePart
+  ]);
+
+  const response = result.response;
+  let text = response.text();
+
+  // Strip markdown fences if present
+  text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+
+  const data = JSON.parse(text);
+  return data.cards;
 }
 
 function saveCards(deckTitle, rawCards) {
@@ -140,7 +113,6 @@ function saveCards(deckTitle, rawCards) {
   return deckId;
 }
 
-// Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', hasApiKey: !!process.env.GEMINI_API_KEY });
 });
@@ -162,8 +134,8 @@ app.get('/api/decks/:id/cards', (req, res) => {
 
 app.post('/api/decks/upload', upload.single('file'), async (req, res) => {
   const { title } = req.body;
-  if (!title) return res.status(400).json({ error: "Missing deck title" });
-  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+  if (!title) return res.status(400).json({ error: 'Missing deck title' });
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
   try {
     const { mimetype, buffer } = req.file;
@@ -171,29 +143,28 @@ app.post('/api/decks/upload', upload.single('file'), async (req, res) => {
     const deckId = saveCards(title, rawCards);
     res.json({ success: true, deckId, totalGenerated: rawCards.length });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Processing failed: " + err.message });
+    console.error('Upload error:', err);
+    res.status(500).json({ error: 'Processing failed: ' + err.message });
   }
 });
 
 app.post('/api/decks/generate', async (req, res) => {
   const { title, text } = req.body;
-  if (!title || !text) return res.status(400).json({ error: "Please provide a name and text." });
-  if (typeof title !== 'string' || typeof text !== 'string') return res.status(400).json({ error: "Title and text must be text." });
-  if (title.length > 200) return res.status(400).json({ error: "Name too long (max 200 characters)" });
-  if (text.length > 50000) return res.status(400).json({ error: "Text too long (max 50000 characters)" });
+  if (!title || !text) return res.status(400).json({ error: 'Please provide a name and text.' });
+  if (typeof title !== 'string' || typeof text !== 'string') return res.status(400).json({ error: 'Title and text must be text.' });
+  if (title.length > 200) return res.status(400).json({ error: 'Name too long (max 200 characters)' });
+  if (text.length > 50000) return res.status(400).json({ error: 'Text too long (max 50000 characters)' });
 
   try {
-    const rawCards = await generateCardsFromAI(text);
+    const rawCards = await generateCardsFromText(text);
     const deckId = saveCards(title, rawCards);
     res.json({ success: true, deckId, totalGenerated: rawCards.length });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Something went wrong: " + err.message });
+    console.error('Generate error:', err);
+    res.status(500).json({ error: 'Something went wrong: ' + err.message });
   }
 });
 
-// Catch-all route MUST be last
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
