@@ -15,6 +15,14 @@
     /* Reveal */
     .r{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}.r.v{opacity:1;transform:none}.r-d1{transition-delay:.08s}.r-d2{transition-delay:.16s}.r-d3{transition-delay:.24s}
 
+    /* Mobile menu */
+    .mobile-menu{max-height:0;overflow:hidden;transition:max-height .3s ease}
+    .mobile-menu.open{max-height:300px}
+    .hamburger span{transition:all .3s ease}
+    .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+    .hamburger.open span:nth-child(2){opacity:0}
+    .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
     /* Glow btn */
     .glow{position:relative;overflow:hidden;background:#7c3aed;color:#fff;font-weight:600;border:none;border-radius:14px;padding:14px 32px;font-size:15px;cursor:pointer;transition:all .25s}
     .glow::before{content:'';position:absolute;inset:-2px;background:linear-gradient(135deg,#7c3aed,#a78bfa,#7c3aed);border-radius:16px;z-index:-1;opacity:0;transition:opacity .3s}
@@ -67,7 +75,7 @@
 
 <!-- NAV -->
 <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100/60">
-  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+  <div class="max-w-6xl mx-auto px-5 sm:px-6 h-16 flex items-center justify-between">
     <a href="#" class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-xl bg-gray-900 flex items-center justify-center">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M8 8h8M8 12h5"/></svg>
@@ -79,7 +87,22 @@
       <a href="#how" class="text-[13px] text-gray-500 hover:text-gray-900 px-3.5 py-2 rounded-lg hover:bg-gray-50 transition font-medium">How it works</a>
       <a href="#subjects" class="text-[13px] text-gray-500 hover:text-gray-900 px-3.5 py-2 rounded-lg hover:bg-gray-50 transition font-medium">Subjects</a>
     </div>
-    <button class="glow text-[13px] py-2.5 px-5">Get started free</button>
+    <div class="flex items-center gap-3">
+      <button class="glow text-[13px] py-2.5 px-5 hidden sm:block">Get started free</button>
+      <button id="hamburger" class="hamburger md:hidden flex flex-col gap-1.5 w-7" onclick="this.classList.toggle('open');document.getElementById('mobile-menu').classList.toggle('open')">
+        <span class="block h-[2px] w-full bg-gray-700 rounded-full"></span>
+        <span class="block h-[2px] w-full bg-gray-700 rounded-full"></span>
+        <span class="block h-[2px] w-full bg-gray-700 rounded-full"></span>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="mobile-menu md:hidden bg-white border-t border-gray-100/60">
+    <div class="px-5 py-4 space-y-1">
+      <a href="#features" class="block text-sm text-gray-600 hover:text-gray-900 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition font-medium" onclick="document.getElementById('mobile-menu').classList.remove('open');document.getElementById('hamburger').classList.remove('open')">Features</a>
+      <a href="#how" class="block text-sm text-gray-600 hover:text-gray-900 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition font-medium" onclick="document.getElementById('mobile-menu').classList.remove('open');document.getElementById('hamburger').classList.remove('open')">How it works</a>
+      <a href="#subjects" class="block text-sm text-gray-600 hover:text-gray-900 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition font-medium" onclick="document.getElementById('mobile-menu').classList.remove('open');document.getElementById('hamburger').classList.remove('open')">Subjects</a>
+      <button class="glow w-full text-sm mt-2" onclick="document.getElementById('mobile-menu').classList.remove('open');document.getElementById('hamburger').classList.remove('open')">Get started free</button>
+    </div>
   </div>
 </nav>
 
@@ -112,10 +135,10 @@
       <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
       Trusted by 1.2M+ students worldwide
     </div>
-    <h1 class="text-[2.8rem] md:text-[3.5rem] lg:text-[4rem] font-black leading-[1.05] tracking-tight mb-6">
+    <h1 class="text-[2.2rem] sm:text-[2.8rem] md:text-[3.5rem] lg:text-[4rem] font-black leading-[1.05] tracking-tight mb-5 sm:mb-6">
       Study smarter,<br>not harder<span class="text-violet-600">.</span>
     </h1>
-    <p class="text-gray-500 text-base md:text-lg max-w-lg mx-auto mb-10 leading-relaxed">Upload your notes or images. AI generates flashcards, quizzes, and highlights — instantly.</p>
+    <p class="text-gray-500 text-sm sm:text-base md:text-lg max-w-lg mx-auto mb-8 sm:mb-10 leading-relaxed px-2">Upload your notes or images. AI generates flashcards, quizzes, and highlights — instantly.</p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
       <button class="glow text-[15px] py-3.5 px-8 inline-flex items-center gap-2.5 shadow-lg shadow-violet-300/30" onclick="document.getElementById('input-text').scrollIntoView({behavior:'smooth',block:'center'})">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -130,12 +153,12 @@
 </section>
 
 <!-- CREATE FLASHCARDS -->
-<section id="create" class="py-16 relative z-10">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="bg-white rounded-[24px] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+<section id="create" class="py-14 sm:py-16 relative z-10">
+  <div class="max-w-5xl mx-auto px-5 sm:px-6">
+    <div class="bg-white rounded-[20px] sm:rounded-[24px] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
       <div class="grid grid-cols-1 lg:grid-cols-5">
         <!-- Form -->
-        <div class="lg:col-span-3 p-6 sm:p-8">
+        <div class="lg:col-span-3 p-5 sm:p-6 md:p-8">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M8 8h8M8 12h5"/></svg>
@@ -191,8 +214,8 @@
 </section>
 
 <!-- LOGOS -->
-<section class="py-12 bg-white border-y border-gray-100/60 overflow-hidden">
-  <div class="max-w-5xl mx-auto px-6 text-center">
+<section class="py-10 sm:py-12 bg-white border-y border-gray-100/60 overflow-hidden">
+  <div class="max-w-5xl mx-auto px-5 sm:px-6 text-center">
     <div class="overflow-hidden mb-5">
       <div class="lt">
         <span class="font-bold text-[11px] tracking-widest text-gray-300 whitespace-nowrap uppercase">Politecnico Milano</span>
@@ -214,27 +237,27 @@
 </section>
 
 <!-- FEATURES -->
-<section id="features" class="py-24 bg-white">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="text-center mb-16 r">
+<section id="features" class="py-20 sm:py-24 bg-white">
+  <div class="max-w-5xl mx-auto px-5 sm:px-6">
+    <div class="text-center mb-12 sm:mb-16 r">
       <div class="inline-flex items-center gap-2 bg-gray-100 text-gray-500 text-[11px] font-semibold px-4 py-2 rounded-full mb-5 uppercase tracking-wider">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         Features
       </div>
-      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Everything you need to ace your exams</h2>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Everything you need to ace your exams</h2>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <div class="bg-gray-50 rounded-2xl p-7 border border-gray-100 r r-d1 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 group">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
+      <div class="bg-gray-50 rounded-2xl p-6 sm:p-7 border border-gray-100 r r-d1 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 group">
         <div class="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-5 group-hover:bg-violet-200 transition"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M8 8h8M8 12h5"/></svg></div>
         <h3 class="font-bold text-gray-900 mb-2">AI Flashcard Generator</h3>
         <p class="text-sm text-gray-500 leading-relaxed">Paste text or upload an image — AI creates perfect Q&A flashcards in seconds.</p>
       </div>
-      <div class="bg-gray-50 rounded-2xl p-7 border border-gray-100 r r-d2 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 group">
+      <div class="bg-gray-50 rounded-2xl p-6 sm:p-7 border border-gray-100 r r-d2 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 group">
         <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-5 group-hover:bg-emerald-200 transition"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 20V4"/><path d="m4 12 4-4 4 4"/><rect x="2" y="2" width="20" height="20" rx="4" fill="none"/></svg></div>
         <h3 class="font-bold text-gray-900 mb-2">Spaced Repetition</h3>
         <p class="text-sm text-gray-500 leading-relaxed">Smart scheduling algorithm optimizes review timing for maximum retention.</p>
       </div>
-      <div class="bg-gray-50 rounded-2xl p-7 border border-gray-100 r r-d3 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 group">
+      <div class="bg-gray-50 rounded-2xl p-6 sm:p-7 border border-gray-100 r r-d3 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 group">
         <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-5 group-hover:bg-amber-200 transition"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
         <h3 class="font-bold text-gray-900 mb-2">Image Recognition</h3>
         <p class="text-sm text-gray-500 leading-relaxed">Upload photos of textbooks, slides, or handwritten notes — AI extracts and creates cards.</p>
@@ -244,18 +267,18 @@
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how" class="py-24 bg-gray-50">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="text-center mb-16 r">
+<section id="how" class="py-20 sm:py-24 bg-gray-50">
+  <div class="max-w-5xl mx-auto px-5 sm:px-6">
+    <div class="text-center mb-12 sm:mb-16 r">
       <div class="inline-flex items-center gap-2 bg-white text-gray-500 text-[11px] font-semibold px-4 py-2 rounded-full mb-5 border border-gray-200 uppercase tracking-wider">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
         How it works
       </div>
-      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Three steps to smarter studying</h2>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Three steps to smarter studying</h2>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
       <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden r r-d1 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300">
-        <div class="bg-gradient-to-br from-violet-50 to-indigo-50 p-8 flex items-center justify-center h-48">
+        <div class="bg-gradient-to-br from-violet-50 to-indigo-50 p-6 sm:p-8 flex items-center justify-center h-40 sm:h-48">
           <div class="w-20 h-20 rounded-2xl bg-white shadow-lg flex items-center justify-center">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           </div>
@@ -267,7 +290,7 @@
         </div>
       </div>
       <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden r r-d2 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300">
-        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 flex items-center justify-center h-48">
+        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 sm:p-8 flex items-center justify-center h-40 sm:h-48">
           <div class="w-20 h-20 rounded-2xl bg-white shadow-lg flex items-center justify-center">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           </div>
@@ -279,7 +302,7 @@
         </div>
       </div>
       <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden r r-d3 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300">
-        <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-8 flex items-center justify-center h-48">
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-6 sm:p-8 flex items-center justify-center h-40 sm:h-48">
           <div class="w-20 h-20 rounded-2xl bg-white shadow-lg flex items-center justify-center">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           </div>
@@ -295,8 +318,8 @@
 </section>
 
 <!-- SUBJECTS / GLOBE -->
-<section id="subjects" class="py-28 relative overflow-hidden" style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%)">
-  <div class="max-w-5xl mx-auto px-6 text-center relative z-10">
+<section id="subjects" class="py-20 sm:py-28 relative overflow-hidden" style="background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%)">
+  <div class="max-w-5xl mx-auto px-5 sm:px-6 text-center relative z-10">
     <div class="globe-w mb-12">
       <div class="absolute inset-0 border border-white/8 rounded-full pulse"></div>
       <div class="absolute inset-5 border border-white/8 rounded-full pulse" style="animation-delay:1s"></div>
@@ -314,15 +337,15 @@
       <div class="ot"><div class="bg-white/10 backdrop-blur text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/15 whitespace-nowrap">Languages</div></div>
       <div class="ot"><div class="bg-white/10 backdrop-blur text-white text-[10px] font-medium px-3 py-1.5 rounded-full border border-white/15 whitespace-nowrap">Business</div></div>
     </div>
-    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">Whatever you study,<br>we've got you covered.</h2>
+    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4 tracking-tight">Whatever you study,<br>we've got you covered.</h2>
     <p class="text-sm text-gray-400">Click a subject to explore flashcard decks</p>
   </div>
 </section>
 
 <!-- SAVED DECKS -->
-<section class="py-20 bg-white">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="bg-gray-50 rounded-[24px] border border-gray-100 p-8 r">
+<section class="py-16 sm:py-20 bg-white">
+  <div class="max-w-5xl mx-auto px-5 sm:px-6">
+    <div class="bg-gray-50 rounded-[20px] sm:rounded-[24px] border border-gray-100 p-6 sm:p-8 r">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-gray-900">Your study sets</h2>
         <span class="text-xs text-gray-400 font-medium">Auto-saved</span>
@@ -333,9 +356,9 @@
 </section>
 
 <!-- FOOTER -->
-<footer class="py-12 bg-white border-t border-gray-100">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm mb-10">
+<footer class="py-10 sm:py-12 bg-white border-t border-gray-100">
+  <div class="max-w-5xl mx-auto px-5 sm:px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-sm mb-8 sm:mb-10">
       <div><h5 class="font-semibold text-gray-900 mb-3">Product</h5><ul class="space-y-2 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Features</a></li><li><a href="#" class="hover:text-violet-600 transition">Pricing</a></li><li><a href="#" class="hover:text-violet-600 transition">Changelog</a></li></ul></div>
       <div><h5 class="font-semibold text-gray-900 mb-3">Resources</h5><ul class="space-y-2 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">Help Center</a></li><li><a href="#" class="hover:text-violet-600 transition">Blog</a></li><li><a href="#" class="hover:text-violet-600 transition">Community</a></li></ul></div>
       <div><h5 class="font-semibold text-gray-900 mb-3">Company</h5><ul class="space-y-2 text-gray-500"><li><a href="#" class="hover:text-violet-600 transition">About</a></li><li><a href="#" class="hover:text-violet-600 transition">Careers</a></li><li><a href="#" class="hover:text-violet-600 transition">Contact</a></li></ul></div>
