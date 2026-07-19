@@ -50,8 +50,8 @@
           <textarea id="input-text" rows="3" placeholder="Paste your notes, textbook, or any text here..." class="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl text-sm border border-slate-200 font-medium placeholder-slate-400 resize-none transition"></textarea>
 
           <div id="drop-zone" class="border border-dashed border-slate-300 rounded-xl p-4 text-center cursor-pointer hover:border-teal-400 hover:bg-teal-50/30 transition">
-            <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif" class="hidden">
-            <p class="text-xs text-slate-400 font-medium">Drop a <strong class="text-slate-500">PDF</strong> or <strong class="text-slate-500">photo</strong> here, or <span class="text-teal-600 font-semibold">choose a file</span></p>
+            <input type="file" id="file-input" accept=".png,.jpg,.jpeg,.webp,.gif" class="hidden">
+            <p class="text-xs text-slate-400 font-medium">Drop a <strong class="text-slate-500">photo</strong> here, or <span class="text-teal-600 font-semibold">choose a file</span></p>
             <p id="file-name" class="text-xs text-teal-700 mt-1.5 hidden font-semibold truncate"></p>
           </div>
 
@@ -296,9 +296,9 @@
     });
 
     function handleFileSelect(file) {
-      const allowed = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+      const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
       if (!allowed.includes(file.type)) {
-        alert('Sorry, we can\'t use that file type. Please use a PDF or image (PNG, JPG, etc).');
+        alert('Sorry, we can only use image files (PNG, JPG, etc). For text, paste it directly instead.');
         return;
       }
       selectedFile = file;

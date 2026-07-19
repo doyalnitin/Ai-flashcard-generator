@@ -1,66 +1,37 @@
 import express from 'express';
-import Database from 'better-sqlite3';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
-import * as pdfParse from 'pdf-parse';
 
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Configure directory context paths for serving frontend layouts
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(__dirname));
 
-// Configure multer for file uploads (memory storage for buffer access)
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowed = [
-      'application/pdf',
-      'image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'
-    ];
+    const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
     cb(null, allowed.includes(file.mimetype));
   }
 });
 
-// Initialize or open local SQLite storage file
-const dataDir = path.join(__dirname, 'data');
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
-const db = new Database(path.join(dataDir, 'flashcards.db'));
+// In-memory storage (resets on cold start on Vercel)
+let decks = [];
+let cards = [];
+let nextDeckId = 1;
+let nextCardId = 1;
 
-// Build structural database schema layout tables
-db.exec(`
-  CREATE TABLE IF NOT EXISTS decks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS cards (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    deck_id INTEGER,
-    type TEXT CHECK(type IN ('QA', 'CLOZE')),
-    front TEXT NOT NULL,
-    back TEXT NOT NULL,
-    FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE
-  );
-`);
-
-// Initialize the Google Gen AI client wrapper
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-/**
- * Core AI extraction logic using the verified Gemini structural schema
- */
 async function generateCardsFromAI(sourceText) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
@@ -100,9 +71,6 @@ async function generateCardsFromAI(sourceText) {
   return result.cards;
 }
 
-/**
- * Generate flashcards from an image using Gemini multimodal API
- */
 async function generateCardsFromImage(buffer, mimeType) {
   const base64Data = buffer.toString('base64');
   const response = await ai.models.generateContent({
@@ -151,121 +119,70 @@ async function generateCardsFromImage(buffer, mimeType) {
   return result.cards;
 }
 
-/**
- * Generate flashcards from a PDF file (extract text first, then generate)
- */
-async function generateCardsFromPDF(buffer) {
-  const pdfData = await pdfParse(buffer);
-  if (!pdfData.text || pdfData.text.trim().length === 0) {
-    throw new Error("No text content found in the PDF");
+function saveCards(deckTitle, rawCards) {
+  const deckId = nextDeckId++;
+  const now = new Date().toISOString();
+  decks.push({ id: deckId, title: deckTitle, created_at: now });
+  for (const card of rawCards) {
+    cards.push({ id: nextCardId++, deck_id: deckId, type: card.type, front: card.front, back: card.back });
   }
-  return generateCardsFromAI(pdfData.text);
+  return deckId;
 }
 
-// API ENDPOINT: Fetch all saved decks along with total card metrics
 app.get('/api/decks', (req, res) => {
-  try {
-    const stmt = db.prepare(`
-      SELECT d.*, COUNT(c.id) as totalCards 
-      FROM decks d LEFT JOIN cards c ON d.id = c.deck_id 
-      GROUP BY d.id ORDER BY d.created_at DESC
-    `);
-    const data = stmt.all();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const result = decks
+    .map(d => ({
+      ...d,
+      totalCards: cards.filter(c => c.deck_id === d.id).length
+    }))
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  res.json(result);
 });
 
-// API ENDPOINT: Fetch specific target card records inside a deck
 app.get('/api/decks/:id/cards', (req, res) => {
-  try {
-    const stmt = db.prepare('SELECT * FROM cards WHERE deck_id = ?');
-    const data = stmt.all(req.params.id);
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const deckCards = cards.filter(c => c.deck_id === Number(req.params.id));
+  res.json(deckCards);
 });
 
-// API ENDPOINT: Upload a PDF or image file, generate flashcards from it
 app.post('/api/decks/upload', upload.single('file'), async (req, res) => {
   const { title } = req.body;
   if (!title) return res.status(400).json({ error: "Missing deck title" });
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
   try {
-    let rawCards;
     const { mimetype, buffer } = req.file;
-
-    if (mimetype === 'application/pdf') {
-      rawCards = await generateCardsFromPDF(buffer);
-    } else if (mimetype.startsWith('image/')) {
-      rawCards = await generateCardsFromImage(buffer, mimetype);
-    } else {
-      return res.status(400).json({ error: "Unsupported file type" });
-    }
-
-    const insertDeck = db.prepare('INSERT INTO decks (title) VALUES (?)');
-    const insertCard = db.prepare('INSERT INTO cards (deck_id, type, front, back) VALUES (?, ?, ?, ?)');
-
-    const transaction = db.transaction((deckTitle, cardsList) => {
-      const info = insertDeck.run(deckTitle);
-      const newDeckId = info.lastInsertRowid;
-      for (const card of cardsList) {
-        insertCard.run(newDeckId, card.type, card.front, card.back);
-      }
-      return newDeckId;
-    });
-
-    const generatedDeckId = transaction(title, rawCards);
-    res.json({ success: true, deckId: generatedDeckId, totalGenerated: rawCards.length });
-
+    const rawCards = await generateCardsFromImage(buffer, mimetype);
+    const deckId = saveCards(title, rawCards);
+    res.json({ success: true, deckId, totalGenerated: rawCards.length });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Processing failed: " + err.message });
   }
 });
 
-// API ENDPOINT: Receive text manual data, parse via AI, and store inside database
 app.post('/api/decks/generate', async (req, res) => {
   const { title, text } = req.body;
-  if (!title || !text) return res.status(400).json({ error: "Missing layout title or manual content body parameters" });
-  if (typeof title !== 'string' || typeof text !== 'string') return res.status(400).json({ error: "Title and text must be strings" });
-  if (title.length > 200) return res.status(400).json({ error: "Title too long (max 200 chars)" });
-  if (text.length > 50000) return res.status(400).json({ error: "Text too long (max 50000 chars)" });
+  if (!title || !text) return res.status(400).json({ error: "Please provide a name and text." });
+  if (typeof title !== 'string' || typeof text !== 'string') return res.status(400).json({ error: "Title and text must be text." });
+  if (title.length > 200) return res.status(400).json({ error: "Name too long (max 200 characters)" });
+  if (text.length > 50000) return res.status(400).json({ error: "Text too long (max 50000 characters)" });
 
   try {
     const rawCards = await generateCardsFromAI(text);
-
-    // SQL Transaction process execution to secure atomic multi-table injection logic
-    const insertDeck = db.prepare('INSERT INTO decks (title) VALUES (?)');
-    const insertCard = db.prepare('INSERT INTO cards (deck_id, type, front, back) VALUES (?, ?, ?, ?)');
-
-    const transaction = db.transaction((deckTitle, cardsList) => {
-      const info = insertDeck.run(deckTitle);
-      const newDeckId = info.lastInsertRowid;
-
-      for (const card of cardsList) {
-        insertCard.run(newDeckId, card.type, card.front, card.back);
-      }
-      return newDeckId;
-    });
-
-    const generatedDeckId = transaction(title, rawCards);
-    res.json({ success: true, deckId: generatedDeckId, totalGenerated: rawCards.length });
-
+    const deckId = saveCards(title, rawCards);
+    res.json({ success: true, deckId, totalGenerated: rawCards.length });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Pipeline processing failure caught: " + err.message });
+    res.status(500).json({ error: "Something went wrong: " + err.message });
   }
 });
 
-// Express v5 catch-all route for SPA
 app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Full-stack Flashcard server roaring on: http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
+
+export default app;

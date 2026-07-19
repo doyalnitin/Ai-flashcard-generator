@@ -1,13 +1,12 @@
 # FlashMind
 
-Turn any text, PDF, or image into study flashcards using AI.
+Turn any text or image into study flashcards using AI.
 
 ## What it does
 
-- Paste text or upload a PDF/image
+- Paste text or upload a photo
 - AI automatically creates question-and-answer flashcards
 - Study with a flip-card interface
-- All your flashcards are saved locally
 
 ## Quick Start
 
@@ -29,10 +28,17 @@ node server.js
 
 Open http://localhost:3000 in your browser.
 
+## Deploy to Vercel
+
+1. Push to GitHub
+2. Import repo on vercel.com
+3. Add `GEMINI_API_KEY` as an environment variable
+4. Deploy
+
 ## Tech Stack
 
 - **Frontend:** HTML, Tailwind CSS, vanilla JavaScript
-- **Backend:** Express.js, SQLite (better-sqlite3)
-- **AI:** Google Gemini 2.5 Flash
-- **File parsing:** pdf-parse (for PDFs), Gemini Vision (for images)
+- **Backend:** Express.js, in-memory storage
+- **AI:** Google Gemini 2.5 Flash (text + vision)
+
 # Ai-flashcard-generator
