@@ -32,18 +32,29 @@ let nextCardId = 1;
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+function extractText(response) {
+  try {
+    if (response.candidates && response.candidates[0] && response.candidates[0].content && response.candidates[0].content.parts) {
+      return response.candidates[0].content.parts[0].text;
+    }
+    if (typeof response.text === 'function') return response.text();
+    if (response.text) return response.text;
+  } catch (e) {
+    console.error('Response extraction error:', e);
+  }
+  throw new Error('Could not extract text from Gemini response');
+}
+
 async function generateCardsFromAI(sourceText) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: `Generate a collection of comprehensive, atomic flashcards based strictly on the following text content:\n\n${sourceText}`,
+    model: "gemini-2.0-flash",
+    contents: `Generate flashcards from this text. Return JSON only, no markdown:\n\n${sourceText}`,
     config: {
-      systemInstruction: `You are an expert industrial microlearning assistant. Your job is to convert raw technical texts, SOPs, and operational manuals into high-yield, atomic flashcards. 
-        
-      Adhere to these absolute engineering rules:
-      1. MINIMUM INFORMATION PRINCIPLE: Each card must contain exactly ONE atomic concept or fact.
-      2. TYPES OF CARDS: Use "QA" for direct concept questions and "CLOZE" for fill-in-the-blank statements.
-      3. CLOZE STYLE: Replace key technical terms with "______" in the front, and provide the isolated keyword in the back.
-      4. AVOID AMBIGUITY: The front text must contain clear baseline context.`,
+      systemInstruction: `You are an expert flashcard generator. Convert text into atomic flashcards. Rules:
+1. Each card = ONE concept
+2. Use "QA" for questions, "CLOZE" for fill-in-blank
+3. For CLOZE: use "______" in front, isolated term in back
+4. Return valid JSON: {"cards":[{"type":"QA","front":"...","back":"..."}]}`,
       temperature: 0.2,
       responseMimeType: "application/json",
       responseSchema: {
@@ -67,18 +78,7 @@ async function generateCardsFromAI(sourceText) {
     },
   });
 
-  // Handle different response formats
-  let text;
-  if (typeof response.text === 'function') {
-    text = response.text();
-  } else if (response.text) {
-    text = response.text;
-  } else if (response.candidates && response.candidates[0]) {
-    text = response.candidates[0].content.parts[0].text;
-  } else {
-    throw new Error('Could not extract text from Gemini response');
-  }
-  
+  const text = extractText(response);
   const result = JSON.parse(text);
   return result.cards;
 }
@@ -86,24 +86,22 @@ async function generateCardsFromAI(sourceText) {
 async function generateCardsFromImage(buffer, mimeType) {
   const base64Data = buffer.toString('base64');
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.0-flash",
     contents: [
       {
         role: "user",
         parts: [
-          { text: "Generate a collection of comprehensive, atomic flashcards based strictly on the content shown in this image." },
+          { text: "Generate flashcards from this image. Return JSON only, no markdown." },
           { inlineData: { mimeType, data: base64Data } }
         ]
       }
     ],
     config: {
-      systemInstruction: `You are an expert industrial microlearning assistant. Your job is to convert raw technical texts, SOPs, and operational manuals into high-yield, atomic flashcards. 
-        
-      Adhere to these absolute engineering rules:
-      1. MINIMUM INFORMATION PRINCIPLE: Each card must contain exactly ONE atomic concept or fact.
-      2. TYPES OF CARDS: Use "QA" for direct concept questions and "CLOZE" for fill-in-the-blank statements.
-      3. CLOZE STYLE: Replace key technical terms with "______" in the front, and provide the isolated keyword in the back.
-      4. AVOID AMBIGUITY: The front text must contain clear baseline context.`,
+      systemInstruction: `You are an expert flashcard generator. Convert text into atomic flashcards. Rules:
+1. Each card = ONE concept
+2. Use "QA" for questions, "CLOZE" for fill-in-blank
+3. For CLOZE: use "______" in front, isolated term in back
+4. Return valid JSON: {"cards":[{"type":"QA","front":"...","back":"..."}]}`,
       temperature: 0.2,
       responseMimeType: "application/json",
       responseSchema: {
@@ -127,18 +125,7 @@ async function generateCardsFromImage(buffer, mimeType) {
     },
   });
 
-  // Handle different response formats
-  let text;
-  if (typeof response.text === 'function') {
-    text = response.text();
-  } else if (response.text) {
-    text = response.text;
-  } else if (response.candidates && response.candidates[0]) {
-    text = response.candidates[0].content.parts[0].text;
-  } else {
-    throw new Error('Could not extract text from Gemini response');
-  }
-  
+  const text = extractText(response);
   const result = JSON.parse(text);
   return result.cards;
 }
@@ -152,6 +139,11 @@ function saveCards(deckTitle, rawCards) {
   }
   return deckId;
 }
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', hasApiKey: !!process.env.GEMINI_API_KEY });
+});
 
 app.get('/api/decks', (req, res) => {
   const result = decks
