@@ -3,3 +3,6 @@ node_modules/
 data/
 flashcards.db
 .vercel
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
