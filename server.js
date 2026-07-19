@@ -67,7 +67,18 @@ async function generateCardsFromAI(sourceText) {
     },
   });
 
-  const text = typeof response.text === 'function' ? response.text() : response.text;
+  // Handle different response formats
+  let text;
+  if (typeof response.text === 'function') {
+    text = response.text();
+  } else if (response.text) {
+    text = response.text;
+  } else if (response.candidates && response.candidates[0]) {
+    text = response.candidates[0].content.parts[0].text;
+  } else {
+    throw new Error('Could not extract text from Gemini response');
+  }
+  
   const result = JSON.parse(text);
   return result.cards;
 }
@@ -116,7 +127,18 @@ async function generateCardsFromImage(buffer, mimeType) {
     },
   });
 
-  const text = typeof response.text === 'function' ? response.text() : response.text;
+  // Handle different response formats
+  let text;
+  if (typeof response.text === 'function') {
+    text = response.text();
+  } else if (response.text) {
+    text = response.text;
+  } else if (response.candidates && response.candidates[0]) {
+    text = response.candidates[0].content.parts[0].text;
+  } else {
+    throw new Error('Could not extract text from Gemini response');
+  }
+  
   const result = JSON.parse(text);
   return result.cards;
 }
@@ -179,7 +201,8 @@ app.post('/api/decks/generate', async (req, res) => {
   }
 });
 
-app.get('/{*splat}', (req, res) => {
+// Catch-all route MUST be last
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
