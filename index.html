@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlashMind</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .perspective { perspective: 1000px; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .transform-style-3d { transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03); }
+    .card-shadow-lg { box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04); }
+    input:focus, textarea:focus { outline: none; box-shadow: 0 0 0 2px rgba(99,179,163,0.3); }
+  </style>
+</head>
+<body class="bg-[#f5f6f8] min-h-screen text-slate-800 flex flex-col justify-between">
+
+  <header class="w-full max-w-6xl mx-auto flex items-center justify-between px-6 py-5">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight text-slate-900">Flash<span class="text-teal-600">Mind</span></h1>
+        <p class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">Turn any text into flashcards</p>
+      </div>
+    </div>
+    <div id="deck-stats" class="text-xs text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-slate-200 font-medium">
+      Loading...
+    </div>
+  </header>
+
+  <main class="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start px-6 my-4 flex-1">
+
+    <div class="space-y-5 md:col-span-4">
+
+      <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Make new flashcards</h2>
+        <div class="space-y-3">
+          <input id="input-title" type="text" placeholder="Give it a name" class="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl text-sm border border-slate-200 font-medium placeholder-slate-400 transition">
+          <textarea id="input-text" rows="3" placeholder="Paste your notes, textbook, or any text here..." class="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl text-sm border border-slate-200 font-medium placeholder-slate-400 resize-none transition"></textarea>
+
+          <div id="drop-zone" class="border border-dashed border-slate-300 rounded-xl p-4 text-center cursor-pointer hover:border-teal-400 hover:bg-teal-50/30 transition">
+            <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.gif" class="hidden">
+            <p class="text-xs text-slate-400 font-medium">Drop a <strong class="text-slate-500">PDF</strong> or <strong class="text-slate-500">photo</strong> here, or <span class="text-teal-600 font-semibold">choose a file</span></p>
+            <p id="file-name" class="text-xs text-teal-700 mt-1.5 hidden font-semibold truncate"></p>
+          </div>
+
+          <div class="flex gap-2">
+            <button id="btn-generate" class="flex-1 bg-slate-900 text-white hover:bg-slate-800 font-semibold text-xs py-2.5 px-4 rounded-xl transition active:scale-[0.98]">
+              Make cards from text
+            </button>
+            <button id="btn-upload" class="flex-1 bg-teal-600 text-white hover:bg-teal-700 font-semibold text-xs py-2.5 px-4 rounded-xl transition active:scale-[0.98] hidden">
+              Make cards from file
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Your saved flashcards</h2>
+        <div id="decks-list" class="space-y-1.5 max-h-52 overflow-y-auto pr-1"></div>
+      </div>
+    </div>
+
+    <div class="md:col-span-8 flex flex-col items-center justify-center w-full h-full">
+      <div id="study-container" class="w-full max-w-xl">
+
+        <div class="perspective w-full h-80 cursor-pointer" id="flashcard-container">
+          <div id="flashcard-inner" class="transform-style-3d w-full h-full relative">
+
+            <div class="backface-hidden w-full h-full bg-white rounded-2xl card-shadow-lg p-8 flex flex-col justify-between absolute inset-0 border border-slate-100">
+              <div class="flex items-center justify-between">
+                <span id="card-badge" class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">QA</span>
+                <span id="card-progress" class="text-xs font-medium text-slate-300">0 / 0</span>
+              </div>
+              <div class="my-auto py-4">
+                <p id="card-front-text" class="text-lg font-medium text-slate-700 leading-relaxed text-center">
+                  Pick a set or make new flashcards to start...
+                </p>
+              </div>
+              <div class="text-center text-[11px] font-medium text-slate-300">
+                Tap to see the answer
+              </div>
+            </div>
+
+            <div class="rotate-y-180 backface-hidden w-full h-full bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl card-shadow-lg p-8 flex flex-col justify-between absolute inset-0 border border-teal-100">
+              <div class="flex items-center justify-between">
+                <span class="bg-teal-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">Answer</span>
+                <span class="text-xs font-medium text-teal-400">Correct</span>
+              </div>
+              <div class="my-auto py-4">
+                <p id="card-back-text" class="text-xl font-semibold text-teal-900 leading-relaxed text-center">
+                  The answer will appear here.
+                </p>
+              </div>
+              <div class="text-center text-[11px] font-medium text-teal-300">
+                How well did you know it?
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="scheduler-actions" class="invisible opacity-0 transition-all duration-300 w-full flex gap-2 mt-5">
+          <button class="flex-1 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 font-semibold py-2.5 rounded-xl text-sm transition active:scale-[0.98]">Again</button>
+          <button class="flex-1 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200 font-semibold py-2.5 rounded-xl text-sm transition active:scale-[0.98]">Hard</button>
+          <button class="flex-1 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 font-semibold py-2.5 rounded-xl text-sm transition active:scale-[0.98]">Easy</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="w-full text-center text-[11px] text-slate-300 py-4">
+    FlashMind &mdash; turn anything into flashcards
+  </footer>
+
+  <script>
+    let activeDeckCards = [];
+    let currentIndex = 0;
+    let isFlipped = false;
+
+    const flashcardContainer = document.getElementById('flashcard-container');
+    const innerCard = document.getElementById('flashcard-inner');
+    const actionsBlock = document.getElementById('scheduler-actions');
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    flashcardContainer.addEventListener('click', () => {
+      if (activeDeckCards.length === 0) return;
+      isFlipped = !isFlipped;
+      if (isFlipped) {
+        innerCard.classList.add('rotate-y-180');
+        actionsBlock.classList.remove('invisible', 'opacity-0');
+      } else {
+        innerCard.classList.remove('rotate-y-180');
+        actionsBlock.classList.add('invisible', 'opacity-0');
+      }
+    });
+
+    async function fetchAllDecks() {
+      const res = await fetch('/api/decks');
+      const decks = await res.json();
+      document.getElementById('deck-stats').textContent = decks.length === 1 ? '1 set of flashcards' : `${decks.length} sets of flashcards`;
+
+      const decksListEl = document.getElementById('decks-list');
+      if (decks.length === 0) {
+        decksListEl.innerHTML = '<p class="text-xs text-slate-300 text-center py-3">No flashcards yet. Make your first set above!</p>';
+        return;
+      }
+
+      decksListEl.innerHTML = decks.map(d => `
+        <button data-deck-id="${d.id}" class="deck-btn w-full text-left hover:bg-slate-50 border border-slate-100 rounded-xl p-3 text-xs transition flex items-center justify-between group">
+          <div class="truncate pr-3">
+            <p class="font-semibold text-slate-700 truncate text-sm">${escapeHtml(d.title)}</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">${new Date(d.created_at).toLocaleDateString()}</p>
+          </div>
+          <span class="bg-slate-100 text-slate-500 font-semibold px-2 py-0.5 rounded-md text-[10px] group-hover:bg-teal-600 group-hover:text-white transition">${d.totalCards} cards</span>
+        </button>
+      `).join('');
+
+      decksListEl.querySelectorAll('.deck-btn').forEach(btn => {
+        btn.addEventListener('click', () => loadDeckData(btn.dataset.deckId));
+      });
+    }
+
+    async function loadDeckData(id) {
+      try {
+        const res = await fetch(`/api/decks/${id}/cards`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        activeDeckCards = await res.json();
+        currentIndex = 0;
+        resetCardDisplay();
+        renderActiveCard();
+      } catch (e) {
+        alert('Failed to load flashcards: ' + e.message);
+      }
+    }
+
+    async function createNewDeck() {
+      const titleInput = document.getElementById('input-title');
+      const textInput = document.getElementById('input-text');
+      const btn = document.getElementById('btn-generate');
+
+      if (!titleInput.value.trim() || !textInput.value.trim()) {
+        alert('Please enter a name and paste some text first.');
+        return;
+      }
+
+      btn.disabled = true;
+        btn.textContent = 'Making flashcards...';
+
+      try {
+        const res = await fetch('/api/decks/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: titleInput.value.trim(), text: textInput.value.trim() })
+        });
+        const data = await res.json();
+        if (data.success) {
+          titleInput.value = '';
+          textInput.value = '';
+          await fetchAllDecks();
+          await loadDeckData(data.deckId);
+        } else {
+          alert('Generation failed: ' + data.error);
+        }
+      } catch (e) {
+        alert('Something went wrong: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Make cards from text';
+      }
+    }
+
+    function resetCardDisplay() {
+      isFlipped = false;
+      innerCard.classList.remove('rotate-y-180');
+      actionsBlock.classList.add('invisible', 'opacity-0');
+    }
+
+    function renderActiveCard() {
+      if (activeDeckCards.length === 0) return;
+
+      if (currentIndex >= activeDeckCards.length) {
+        document.getElementById('study-container').innerHTML = `
+          <div class="bg-white rounded-2xl card-shadow-lg p-8 text-center border border-slate-100">
+            <h3 class="text-xl font-bold text-slate-800 mb-2">All done!</h3>
+            <p class="text-sm text-slate-400">You looked at all the flashcards in this set.</p>
+            <button id="btn-reload" class="mt-5 bg-slate-900 text-white font-semibold text-xs py-2.5 px-5 rounded-xl hover:bg-slate-800 transition">Back to my flashcards</button>
+          </div>
+        `;
+        document.getElementById('btn-reload').addEventListener('click', () => window.location.reload());
+        return;
+      }
+
+      const activeCard = activeDeckCards[currentIndex];
+      document.getElementById('card-badge').textContent = activeCard.type;
+      document.getElementById('card-progress').textContent = `${currentIndex + 1} / ${activeDeckCards.length}`;
+      document.getElementById('card-front-text').textContent = activeCard.front;
+      document.getElementById('card-back-text').textContent = activeCard.back;
+    }
+
+    function shiftNext() {
+      currentIndex++;
+      resetCardDisplay();
+      setTimeout(renderActiveCard, 200);
+    }
+
+    document.getElementById('btn-generate').addEventListener('click', createNewDeck);
+    document.querySelectorAll('#scheduler-actions button').forEach(btn => {
+      btn.addEventListener('click', shiftNext);
+    });
+
+    // File upload handling
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileName = document.getElementById('file-name');
+    const btnUpload = document.getElementById('btn-upload');
+    let selectedFile = null;
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-teal-400', 'bg-teal-50/30');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('border-teal-400', 'bg-teal-50/30');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-teal-400', 'bg-teal-50/30');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFileSelect(file);
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
+    });
+
+    function handleFileSelect(file) {
+      const allowed = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+      if (!allowed.includes(file.type)) {
+        alert('Sorry, we can\'t use that file type. Please use a PDF or image (PNG, JPG, etc).');
+        return;
+      }
+      selectedFile = file;
+      fileName.textContent = file.name;
+      fileName.classList.remove('hidden');
+      btnUpload.classList.remove('hidden');
+    }
+
+    btnUpload.addEventListener('click', createDeckFromFile);
+
+    async function createDeckFromFile() {
+      const titleInput = document.getElementById('input-title');
+      const btn = document.getElementById('btn-upload');
+
+      if (!titleInput.value.trim()) {
+        alert('Please enter a name for your flashcards first.');
+        return;
+      }
+      if (!selectedFile) {
+        alert('Please choose a file first.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Working on it...';
+
+      try {
+        const formData = new FormData();
+        formData.append('title', titleInput.value.trim());
+        formData.append('file', selectedFile);
+
+        const res = await fetch('/api/decks/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          titleInput.value = '';
+          selectedFile = null;
+          fileInput.value = '';
+          fileName.classList.add('hidden');
+          btnUpload.classList.add('hidden');
+          await fetchAllDecks();
+          await loadDeckData(data.deckId);
+        } else {
+          alert('Could not make flashcards: ' + data.error);
+        }
+      } catch (e) {
+        alert('Upload didn\'t work: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Make cards from file';
+      }
+    }
+
+    fetchAllDecks();
+  </script>
+</body>
+</html>
