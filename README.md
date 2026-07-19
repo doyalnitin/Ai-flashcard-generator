@@ -2,6 +2,8 @@
 
 Turn any text or image into study flashcards using AI.
 
+**Live app:** https://ai-flashcard-generator-nine.vercel.app
+
 ## What it does
 
 - Paste text or upload a photo
