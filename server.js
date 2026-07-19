@@ -67,7 +67,8 @@ async function generateCardsFromAI(sourceText) {
     },
   });
 
-  const result = JSON.parse(response.text);
+  const text = typeof response.text === 'function' ? response.text() : response.text;
+  const result = JSON.parse(text);
   return result.cards;
 }
 
@@ -115,7 +116,8 @@ async function generateCardsFromImage(buffer, mimeType) {
     },
   });
 
-  const result = JSON.parse(response.text);
+  const text = typeof response.text === 'function' ? response.text() : response.text;
+  const result = JSON.parse(text);
   return result.cards;
 }
 
