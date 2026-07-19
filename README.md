@@ -28,14 +28,6 @@ Then run:
 node server.js
 ```
 
-Open http://localhost:3000 in your browser.
-
-## Deploy to Vercel
-
-1. Push to GitHub
-2. Import repo on vercel.com
-3. Add `GEMINI_API_KEY` as an environment variable
-4. Deploy
 
 ## Tech Stack
 
