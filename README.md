@@ -35,3 +35,4 @@ Open http://localhost:3000 in your browser.
 - **Backend:** Express.js, SQLite (better-sqlite3)
 - **AI:** Google Gemini 2.5 Flash
 - **File parsing:** pdf-parse (for PDFs), Gemini Vision (for images)
+# Ai-flashcard-generator
